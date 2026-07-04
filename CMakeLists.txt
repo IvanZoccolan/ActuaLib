@@ -81,10 +81,6 @@ target_include_directories(${LIBRARY_NAME} PUBLIC
     "${CMAKE_SOURCE_DIR}"
 )
 
-option(AL_BUILD_TEST_SUITE "Building test suite" ON)
-
-
-
 # Add subdirectories
 add_subdirectory(products)
 add_subdirectory(montecarlo)
@@ -104,8 +100,3 @@ target_link_libraries(${LIBRARY_NAME} PUBLIC concurrency)
 target_link_libraries(${LIBRARY_NAME} PUBLIC math)
 target_link_libraries(${LIBRARY_NAME} PUBLIC aad)
 
-if(AL_BUILD_TEST_SUITE)
-    enable_testing()
-    add_subdirectory(external/googletest)
-    add_subdirectory(tests)
-endif()

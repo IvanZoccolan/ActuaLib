@@ -113,8 +113,7 @@ ActuaLib/
 │   ├── va_gmib.hpp                      # GMIB rider
 │   ├── va_combo.hpp                     # Combined VA products
 │   └── va_factory.hpp                   # VA product factory
-├── docs/            # Library and methodology documentation
-└── tests/           # Google Test suite and regression checks
+└── docs/            # Library and methodology documentation
 ```
 
 At runtime, the usual flow is: a product defines the projection timeline and requested path shape, an ESG model fills a `Scenario<T>` over that shape, the Monte Carlo layer evaluates the product over many paths, and the AAD layer back-propagates sensitivities when the scalar type is `ActuaLib::Number`. The parallel AAD path uses one model clone, one RNG clone, one path buffer, and one tape slot per execution slot so that derivative accumulation remains deterministic.
