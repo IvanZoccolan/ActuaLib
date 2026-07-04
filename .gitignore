@@ -1,0 +1,77 @@
+# Build directories
+build/
+build-v2/
+build-legacy/
+_deps/
+
+# Compiled binaries in source directories
+*.o
+*.a
+*.so
+*.dylib
+
+# CMake generated files in source directories
+cmake_install.cmake
+CMakeCache.txt
+CTestTestfile.cmake
+Makefile
+CMakeFiles/
+
+# Built executables in source directories
+bin/
+lib/
+Testing/
+
+# Executable binaries (CMake-generated, no extension)
+examples/MatrixExample
+examples/UseThreadPool
+examples/CalcDist
+examples/LambdaExample
+examples/MoveSemantics
+examples/Thread_example
+examples/NestedVA*
+examples/PriceAllVARiders
+examples/NestedAllVARiders
+tests/math/matrix_test
+
+# Generated documentation
+docs/*.html
+!docs/LIBRARY_GUIDE.html
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# macOS
+.DS_Store
+nohup.out
+scratch/
+reports/
+data/
+
+# Keep scripts ignored by default, but track key scripts.
+scripts/*
+!scripts/sobolev_va_training.py
+!scripts/gen_portfolio.py
+!scripts/run_portfolio.py
+!scripts/paper_pipeline.txt
+
+# Keep example sources ignored by default, but track only simulate_rider.cpp.
+examples/*
+!examples/CMakeLists.txt
+!examples/simulate_rider.cpp
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Python cache
+__pycache__/
+__pychace__/
+
+# Local experiment/config tooling artifacts
+configs/
+exports/
+tools/

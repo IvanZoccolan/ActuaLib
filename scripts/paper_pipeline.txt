@@ -1,0 +1,577 @@
+################################################################################
+##  ActuaLib — Paper Dataset Pipeline
+##
+##  Target hardware : Hetzner dedicated server (FSN1-DC4, Falkenstein)
+##    CPU     : AMD EPYC 7502P (32 cores / 64 threads, 2.5 GHz base)
+##    RAM     : 256 GB DDR4 ECC
+##    Storage : 2 × 960 GB Datacenter SSD  (Software RAID 1 recommended)
+##    Location: FSN1-DC4, Falkenstein
+##    Cost    : €0.3537 / hour (hourly billing)
+##
+##  ┌─────────────────────────────────────────────────────────────────────┐
+##  │  SECTION 0 — ONE-TIME HETZNER SERVER SETUP                         │
+##  │  Run these commands as root immediately after the OS is installed.  │
+##  │  Skip this section on subsequent runs.                              │
+##  └─────────────────────────────────────────────────────────────────────┘
+##
+##  0-A.  Order the server and install Ubuntu 24.04 LTS
+##  ────────────────────────────────────────────────────
+##  1. Log in to Hetzner Robot: https://robot.hetzner.com
+##  2. Go to Servers → <your server> → Rescue tab.
+##     Select "Linux 64 bit", optionally add your SSH public key, click
+##     "Activate Rescue System". Note the one-time rescue password shown.
+##  3. Go to the Reset tab → "Send CTRL+ALT+DEL" (or press "Reset" button)
+##     to reboot the server into the Rescue System.
+##  4. SSH into the rescue system (wait ~2 min for it to boot):
+##       ssh root@<server-ip>
+##     (use the rescue password, or your SSH key if you added one)
+##  5. Inside the rescue shell, start installimage:
+##       installimage
+##     In the menu select: Ubuntu → Ubuntu 24.04 LTS minimal
+##  6. The mcedit config editor opens.  Apply these settings and save (F10):
+##
+##       DRIVE1 /dev/sda
+##       DRIVE2 /dev/sdb
+##       SWRAID 1
+##       SWRAIDLEVEL 1          # Mirror — ~900 GB usable, fault tolerant
+##       HOSTNAME actuanode
+##       PART /boot  ext3   512M
+##       PART lvm    vg0    all
+##       LV vg0  root   /        ext4  64G
+##       LV vg0  swap   swap     swap  32G
+##       LV vg0  data   /data    ext4  all
+##       IMAGE /root/.oldroot/nfs/install/../images/Ubuntu-2404-noble-amd64-base.tar.gz
+##
+##     The /data LV gets ~800 GB for simulation output (~80 GB expected
+##     for 2 700 policies at 100 000 outer × 1 000 inner + 10 000 × 100).
+##  7. After installation finishes:
+##       reboot
+##     SSH back in with root (same password, now booting from the installed OS).
+##
+##  0-B.  Initial system configuration
+##  ─────────────────────────────────────
+##  (Run as root on the freshly installed Ubuntu 24.04 system)
+##
+# Create a non-root user for daily use (optional but recommended)
+# adduser actuauser && usermod -aG sudo actuauser
+# cp -r ~/.ssh /home/actuauser/.ssh && chown -R actuauser: /home/actuauser/.ssh
+
+# Harden SSH: disable password auth, keep key-based only
+# sed -i 's/^#\?PasswordAuthentication .*/PasswordAuthentication no/' /etc/ssh/sshd_config
+# systemctl restart ssh
+
+# Allow only SSH through the built-in firewall (optional; Hetzner Robot
+# also has a hardware firewall under Servers → Firewall):
+# ufw allow OpenSSH && ufw --force enable
+
+##  0-C.  Install build and runtime dependencies
+##  ──────────────────────────────────────────────
+# (Run as root or with sudo)
+apt-get update -q
+apt-get install -y \
+    git \
+    cmake \
+    g++ \
+    libhdf5-dev \
+    libopenblas-dev \
+    python3-dev \
+    python3-pip \
+    python3-venv \
+    screen \
+    htop \
+    rsync
+
+# Verify cmake version meets minimum (3.22):
+cmake --version   # should print 3.28.x on Ubuntu 24.04
+
+# Verify HDF5 (needed by SimulateRider):
+dpkg -l libhdf5-dev | tail -1
+
+##  0-D.  Clone the repository and build SimulateRider
+##  ────────────────────────────────────────────────────
+# SSH key or HTTPS — adjust to your repo URL:
+mkdir -p /data/actuaresearch
+cd /data/actuaresearch
+git clone https://github.com/IvanZoccolan/ActuaLib.git
+cd ActuaLib
+
+# Cmake uses find_package(HDF5) on Linux; no path hints needed.
+mkdir build && cd build
+cmake .. -DCMAKE_BUILD_TYPE=Release
+# AMD EPYC 7502P has 64 logical threads; build with all of them:
+make -j64 SimulateRider
+cd ..
+
+# Quick smoke-test (should produce output to /tmp/smoke.h5):
+build/examples/SimulateRider \
+    --rider GMDB --outer 8 --inner 64 \
+    --threads 64 --output /tmp/smoke.h5 \
+  && echo "Build OK" \
+  || { echo "Build FAILED"; exit 1; }
+
+##  0-E.  Python environment
+##  ──────────────────────────
+python3 -m venv .venv
+source .venv/bin/activate
+pip install --upgrade pip
+pip install h5py numpy scipy pandas matplotlib torch torchvision huggingface_hub
+# Verify:
+python3 -c "import h5py, torch; print('h5py', h5py.__version__, '| torch', torch.__version__)"
+
+##  0-F.  Prepare data directories on the /data LV
+##  ──────────────────────────────────────────────────
+mkdir -p /data/actuaresearch/ActuaLib/data/paper
+# Symlink into the repo for convenience (optional):
+# ln -s /data/actuaresearch/ActuaLib/data /data/actuaresearch/ActuaLib/data
+
+##  ─────────────────────────────────────────────────────────────────────────
+##  End of one-time setup.  All subsequent steps run from the repo root.
+##  Start a persistent screen session so the pipeline survives SSH drops:
+##
+##      screen -S actuapipe
+##      cd /data/actuaresearch/ActuaLib
+##      source .venv/bin/activate
+##      bash scripts/paper_pipeline.txt   # or paste sections manually
+##
+##  To detach: Ctrl-A D   To reattach: screen -r actuapipe
+##  ─────────────────────────────────────────────────────────────────────────
+##
+##  Produces a paper-quality train/test dataset and per-rider × per-rule
+##  surrogate models with PDF reports.
+##
+##  Portfolio structure
+##  ───────────────────
+##    Riders : GMDB  GMMB  GMAB  GMWB  GMIB
+##             GMDB_AB  GMDB_MB  GMDB_WB  GMDB_IB   (9 riders)
+##    Rules  : ROP  ratchet  roll-up                 (3 benefit-base rules)
+##    Subset : 20 policies per rider per rule  (LHS over age / maturity /
+##             policy-age / AV-GB ratio / fees / WB-IB rate)
+##    Total  : 20 × 9 × 3 = 540 policies
+##    Note   : one portfolio per rule is shared by all training tiers and
+##             the test set; only the outer / inner path counts differ.
+##
+##  Simulation configuration (Hetzner FSN1-DC4, EPYC 7502P, 64 threads)
+##  ─────────────────────────────────────────────────────────────────────
+##    Test         : 100 000 outer × 1 000 inner  (~21 min/policy → ~63 hr/rule)
+##    Train-J      :  20 000 outer ×   100 inner  (~0.41 min/policy → ~1.2 hr/rule, measured)
+##
+##  Estimated cost @ €0.3537/h:
+##    Test simulation  :  540 × 21   min  ≈  189 hr  →  ~€66.8
+##    Train-J sim      :  540 × 0.41 min  ≈    3.7 hr  →  ~€ 1.3
+##    Main paper NN    :   54 runs × ~3 min  ≈   2.7 hr  →  ~€ 1.0
+##    Production NN    :   27 runs × ~3 min  ≈   1.4 hr  →  ~€ 0.5
+##    Total            :                    ≈  196.8 hr  →  ~€69.6
+##
+##  Timeline (server running 24/7):
+##    Day 1-8  : Test simulation  (launch first; ~189 hr across 3 rules)
+##    Day 8-9  : Train-J sim  (~3.7 hr)
+##    Day 9    : NN training  (~4 hr)
+##
+##  All paths are relative to the repository root.
+##  Run every command from the repository root directory.
+##  Activate the Python environment before running:
+##      source .venv/bin/activate       # or: conda activate actuaenv
+################################################################################
+
+# ── 0.  Environment -----------------------------------------------------------
+export ACTUAROOT="$(pwd)"
+export BINARY="${ACTUAROOT}/build/examples/SimulateRider"
+SEED=20260327
+
+# ── 1.  Generate portfolios ---------------------------------------------------
+#  One portfolio per benefit-base rule (180 policies = 20 × 9 riders).
+#  All policies share horizon = 60 months (5 years).
+#  The same portfolio JSON is used for test and ALL four training tiers;
+#  only the outer / inner path counts differ in later steps.
+#
+#  Policy diversity: gen_portfolio.py draws each policy by Latin-Hypercube-style
+#  stratified sampling over the following dimensions:
+#    age ∈ [40, 72] (rider-dependent)         maturity ∈ {10..20 yr}
+#    policy age k0 ∈ [12, 120] months          AV/GB ratio ∈ [0.65, 1.50]
+#    base fee ∈ [80, 200] bp/yr               rider fee (per-rider range)
+#    WB withdrawal rate ∈ [4 %, 7 %]          GMIB annuity rate ∈ [4 %, 7 %]
+#  This produces a non-trivial portfolio covering ITM, ATM, and OTM policies
+#  across all maturity buckets, enabling a convincing Sobolev-vs-vanilla demo.
+
+mkdir -p "${ACTUAROOT}/data/paper"
+
+python scripts/gen_portfolio.py \
+    --policies 20 \
+    --benefit-base-rule ROP \
+    --horizon 60 \
+    --seed ${SEED} \
+    --output data/paper/portfolio_rop.json
+
+python scripts/gen_portfolio.py \
+    --policies 20 \
+    --benefit-base-rule ratchet \
+    --horizon 60 \
+    --seed ${SEED} \
+    --output data/paper/portfolio_ratchet.json
+
+python scripts/gen_portfolio.py \
+    --policies 20 \
+    --benefit-base-rule roll-up \
+    --horizon 60 \
+    --seed ${SEED} \
+    --output data/paper/portfolio_rollup.json
+
+# ── 2.  Price test set (100 000 outer × 1 000 inner) -------------------------
+#  Measured: ~21 min/policy, ~63 hr/rule (~189 hr total) on the EPYC 7502P (64 threads)
+#  for 540 policies (20 per rider × 9 riders × 3 rules).
+#  The runner is resume-aware: safe to stop/restart.
+#  LAUNCH THIS FIRST — it is the longest step.  Start step 3 once complete.
+#  RNG seed 20260401 is used exclusively for the test set.  Training tiers
+#  use a distinct seed (20260402) so that the outer (real-world) paths drawn
+#  for training are independent from those in the test set.  Reusing the same
+#  seed would make the training outer paths a prefix of the test sequence
+#  (same Sobol/MCMC draw from the same initial state) — i.e. data leakage.
+
+mkdir -p \
+    data/paper/test_rop \
+    data/paper/test_ratchet \
+    data/paper/test_rollup
+
+python scripts/run_portfolio.py \
+    --portfolio  data/paper/portfolio_rop.json \
+    --binary     "${BINARY}" \
+    --output-dir data/paper/test_rop \
+    --suffix     test_rop \
+    --outer  100000 \
+    --inner    1000 \
+    --threads    64 \
+    --rng    sobol \
+    --seed   20260401
+
+python scripts/run_portfolio.py \
+    --portfolio  data/paper/portfolio_ratchet.json \
+    --binary     "${BINARY}" \
+    --output-dir data/paper/test_ratchet \
+    --suffix     test_ratchet \
+    --outer  100000 \
+    --inner    1000 \
+    --threads    64 \
+    --rng    sobol \
+    --seed   20260401
+
+python scripts/run_portfolio.py \
+    --portfolio  data/paper/portfolio_rollup.json \
+    --binary     "${BINARY}" \
+    --output-dir data/paper/test_rollup \
+    --suffix     test_rollup \
+    --outer  100000 \
+    --inner    1000 \
+    --threads    64 \
+    --rng    sobol \
+    --seed   20260401
+
+# ── 3.  Price training tier (Tier-J: 20 000 outer × 100 inner) ---------------
+#  Measured: ~0.41 min/policy, ~1.2 hr/rule (~3.7 hr total) on EPYC 7502P (64 threads).
+#  Seed 20260402 (distinct from the test seed 20260401) ensures independence.
+#  Run after the test set (step 2) completes.
+
+mkdir -p \
+    data/paper/trainJ_rop   data/paper/trainJ_ratchet  data/paper/trainJ_rollup
+
+for RULE_DIR in rop ratchet rollup; do
+    RULE_JSON="data/paper/portfolio_${RULE_DIR}.json"
+    python scripts/run_portfolio.py \
+        --portfolio  "${RULE_JSON}" \
+        --binary     "${BINARY}" \
+        --output-dir "data/paper/trainJ_${RULE_DIR}" \
+        --suffix     "trainJ_${RULE_DIR}" \
+        --outer  20000 \
+        --inner    100 \
+        --threads   64 \
+        --rng    sobol \
+        --seed   20260402
+done
+
+
+# ── 5.  Train + evaluate main-paper surrogate models -------------------------
+#  One model per rider × rule combination = 9 × 3 = 27 runs.
+#  Uses Tier-J training data (n_out=20 000, n_in=100).
+#  Trains both Sobolev (βS=0.60, βIR=0.60, p_w=0.10) and vanilla (βS=0) for
+#  the Sobolev vs. vanilla comparison tables in the paper.
+#
+#  Architecture: feedforward, 6 hidden layers, H=256, Softplus activation.
+#  Epochs: 300  (cosine annealing lr=1e-3 → 1e-5).
+
+mkdir -p paper
+
+RIDERS="GMDB GMMB GMAB GMWB GMIB GMDB_AB GMDB_MB GMDB_WB GMDB_IB"
+
+# -- 5a.  ROP
+for RIDER in ${RIDERS}; do
+    # Sobolev
+    python scripts/sobolev_va_training.py \
+        --train-dir  data/paper/trainJ_rop \
+        --test-dir   data/paper/test_rop \
+        --rider      ${RIDER} \
+        --update-rule rop \
+        --epochs     300 \
+        --batch-size 512 \
+        --hidden-layers 6 \
+        --hidden-size   256 \
+        --no-skip-connections \
+        --beta-spot  0.60 \
+        --beta-ir    0.60 \
+        --price-weight 0.10 \
+        --seed       42 \
+        --save-dir   paper/surrogate_${RIDER}_rop
+    # Vanilla
+    python scripts/sobolev_va_training.py \
+        --train-dir  data/paper/trainJ_rop \
+        --test-dir   data/paper/test_rop \
+        --rider      ${RIDER} \
+        --update-rule rop \
+        --epochs     300 \
+        --batch-size 512 \
+        --hidden-layers 6 \
+        --hidden-size   256 \
+        --no-skip-connections \
+        --beta-spot  0.00 \
+        --beta-ir    0.00 \
+        --seed       42 \
+        --save-dir   paper/surrogate_${RIDER}_rop_vanilla
+done
+
+# -- 5b.  Ratchet (step-up)
+for RIDER in ${RIDERS}; do
+    # Sobolev
+    python scripts/sobolev_va_training.py \
+        --train-dir  data/paper/trainJ_ratchet \
+        --test-dir   data/paper/test_ratchet \
+        --rider      ${RIDER} \
+        --update-rule step-up \
+        --epochs     300 \
+        --batch-size 512 \
+        --hidden-layers 6 \
+        --hidden-size   256 \
+        --no-skip-connections \
+        --beta-spot  0.60 \
+        --beta-ir    0.60 \
+        --price-weight 0.10 \
+        --seed       42 \
+        --save-dir   paper/surrogate_${RIDER}_ratchet
+    # Vanilla
+    python scripts/sobolev_va_training.py \
+        --train-dir  data/paper/trainJ_ratchet \
+        --test-dir   data/paper/test_ratchet \
+        --rider      ${RIDER} \
+        --update-rule step-up \
+        --epochs     300 \
+        --batch-size 512 \
+        --hidden-layers 6 \
+        --hidden-size   256 \
+        --no-skip-connections \
+        --beta-spot  0.00 \
+        --beta-ir    0.00 \
+        --seed       42 \
+        --save-dir   paper/surrogate_${RIDER}_ratchet_vanilla
+done
+
+# -- 5c.  Roll-up
+for RIDER in ${RIDERS}; do
+    # Sobolev
+    python scripts/sobolev_va_training.py \
+        --train-dir  data/paper/trainJ_rollup \
+        --test-dir   data/paper/test_rollup \
+        --rider      ${RIDER} \
+        --update-rule roll-up \
+        --epochs     300 \
+        --batch-size 512 \
+        --hidden-layers 6 \
+        --hidden-size   256 \
+        --no-skip-connections \
+        --beta-spot  0.60 \
+        --beta-ir    0.60 \
+        --price-weight 0.10 \
+        --seed       42 \
+        --save-dir   paper/surrogate_${RIDER}_rollup
+    # Vanilla
+    python scripts/sobolev_va_training.py \
+        --train-dir  data/paper/trainJ_rollup \
+        --test-dir   data/paper/test_rollup \
+        --rider      ${RIDER} \
+        --update-rule roll-up \
+        --epochs     300 \
+        --batch-size 512 \
+        --hidden-layers 6 \
+        --hidden-size   256 \
+        --no-skip-connections \
+        --beta-spot  0.00 \
+        --beta-ir    0.00 \
+        --seed       42 \
+        --save-dir   paper/surrogate_${RIDER}_rollup_vanilla
+done
+
+# ── 6.  Paper outputs ---------------------------------------------------------
+#  After step 5 each save-dir contains (written by sobolev_va_training.py):
+#    surrogate_<RIDER>_<RULE>/         (run with --beta-spot 0.60 --beta-ir 0.60)
+#      summary_report.pdf   – multi-page PDF (price + dollar-delta + IR greeks)
+#      summary.json         – rel-RMSE + RMSE for price, delta, rho; holds BOTH
+#                             a "vanilla" (price-only baseline) and a "sobolev"
+#                             block under "metrics" (no R² is computed)
+#      sobolev_model.pt     – Sobolev model checkpoint
+#      vanilla_model.pt     – price-only baseline checkpoint
+#    surrogate_<RIDER>_<RULE>_vanilla/ (run with --beta-spot 0.00; same layout)
+#
+#  Note: one run trains BOTH a vanilla baseline and the Sobolev model, so
+#  surrogate_<RIDER>_<RULE>/summary.json already holds the vanilla-vs-Sobolev
+#  comparison.  We collect from that directory; the _vanilla run is kept only
+#  for its standalone checkpoint.
+#
+#  Collect the report PDFs and metrics into a flat paper/ summary tree:
+mkdir -p paper/pdfs paper/metrics
+
+for RIDER in ${RIDERS}; do
+    for RULE in rop ratchet rollup; do
+        SDIR="paper/surrogate_${RIDER}_${RULE}"
+        cp "${SDIR}/summary_report.pdf"  "paper/pdfs/${RIDER}_${RULE}.pdf"      2>/dev/null || true
+        cp "${SDIR}/summary.json"        "paper/metrics/${RIDER}_${RULE}.json"  2>/dev/null || true
+    done
+done
+
+#  Aggregate all metrics into a single summary table (price / delta / rho
+#  relative-RMSE and RMSE for every rider × rule × sobolev-vs-vanilla mode).
+#  collect_metrics.py classifies the copied summaries by content; if paper/metrics
+#  is empty it falls back to scanning paper/surrogate_* directly.
+python scripts/collect_metrics.py \
+    --metrics-dir paper/metrics \
+    --output      paper/metrics/summary_table.csv
+
+echo ""
+echo "=== Pipeline complete ==="
+echo "  PDFs           : paper/pdfs/"
+echo "  Metrics        : paper/metrics/"
+echo "  Summary table  : paper/metrics/summary_table.csv"
+echo "  Models         : paper/surrogate_<RIDER>_<RULE>/"
+
+# ── 7.  Upload dataset to Hugging Face Hub ---------------------------------------
+#  Dataset repository : ivanzoccolan/va-riders
+#  Format             : HDF5 files stored as-is; Hub handles Git LFS for large
+#                       files automatically.
+#  Checksum           : SHA-256 (not MD5).  HF Hub verifies every uploaded file
+#                       with SHA-256 internally.  MD5 has known collision
+#                       weaknesses and is not necessary here.
+#  Reproducibility    : other researchers can download the exact HDF5 files used
+#                       in the paper without re-running the simulation.
+
+# 7-A.  Authenticate (one-time; stores token in ~/.cache/huggingface/token)
+huggingface-cli login
+
+# 7-B.  Create the dataset repository (one-time)
+huggingface-cli repo create va-riders --type dataset
+
+# 7-C.  Generate a SHA-256 manifest for local integrity verification
+find data/paper -name '*.h5' | sort | \
+    xargs sha256sum \
+    > data/paper/sha256_manifest.txt
+echo "SHA-256 manifest written to data/paper/sha256_manifest.txt"
+
+# 7-D.  Upload train + test directories and the manifest
+#  upload_folder is resume-safe: re-running skips already-uploaded files.
+#  Uploads Tier-J training set and the test set.
+python3 - <<'EOF'
+from huggingface_hub import HfApi
+api = HfApi()
+REPO = "ivanzoccolan/va-riders"
+
+for rule in ["rop", "ratchet", "rollup"]:
+    for tier in ["J"]:
+        local_dir = f"data/paper/train{tier}_{rule}"
+        path_in_repo = f"train{tier}/{rule}"
+        print(f"Uploading {local_dir} → {REPO}/{path_in_repo} ...")
+        api.upload_folder(
+            folder_path=local_dir,
+            repo_id=REPO,
+            repo_type="dataset",
+            path_in_repo=path_in_repo,
+            ignore_patterns=["*.log"],
+        )
+
+for rule in ["rop", "ratchet", "rollup"]:
+    for split in ["test"]:
+        local_dir = f"data/paper/{split}_{rule}"
+        path_in_repo = f"{split}/{rule}"
+        print(f"Uploading {local_dir} → {REPO}/{path_in_repo} ...")
+        api.upload_folder(
+            folder_path=local_dir,
+            repo_id=REPO,
+            repo_type="dataset",
+            path_in_repo=path_in_repo,
+            ignore_patterns=["*.log"],
+        )
+
+api.upload_file(
+    path_or_fileobj="data/paper/sha256_manifest.txt",
+    path_in_repo="sha256_manifest.txt",
+    repo_id=REPO,
+    repo_type="dataset",
+)
+print("Upload complete.")
+EOF
+
+# ── 8.  Quick-start: reproduce results from the published dataset ────────────────────
+#  For readers of the paper who want to retrain / evaluate the surrogate models
+#  without running the full simulation pipeline.
+#  Requirements: Python ≥ 3.10, ~30 GB free disk space (Tier-J + test;
+#                ~50 GB if all four training tiers A–D are downloaded),
+#                no C++ build needed.
+
+# 8-A.  Clone the repository and create a Python environment
+git clone https://github.com/IvanZoccolan/ActuaLib.git
+cd ActuaLib
+python3 -m venv .venv && source .venv/bin/activate
+pip install --upgrade pip
+pip install h5py numpy scipy pandas matplotlib torch torchvision huggingface_hub
+
+# 8-B.  Download the full dataset from Hugging Face
+#  The full dataset includes Tier-J training set and the test set
+#  (~100K outer × 1K inner per policy).
+#  Estimated download size: ~20 GB (Tier-J + test).
+python3 - <<'EOF'
+from huggingface_hub import snapshot_download
+snapshot_download(
+    repo_id="ivanzoccolan/va-riders",
+    repo_type="dataset",
+    local_dir="data/paper",
+    ignore_patterns=["*.log"],
+)
+print("Download complete — data/paper/ is ready.")
+EOF
+
+# 8-C.  Verify integrity against the published SHA-256 manifest
+(cd data/paper && sha256sum --check sha256_manifest.txt)
+
+# 8-D.  Train one surrogate model (example: GMDB_WB roll-up)
+#  Replace --rider and --update-rule for any of the 27 rider × rule combinations:
+#    Riders     : GMDB GMMB GMAB GMWB GMIB GMDB_AB GMDB_MB GMDB_WB GMDB_IB
+#    Update rules: rop  /  step-up  /  roll-up
+mkdir -p paper/surrogate_GMDB_WB_rollup
+python scripts/sobolev_va_training.py \
+    --train-dir   data/paper/trainJ_rollup \
+    --test-dir    data/paper/test_rollup \
+    --rider       GMDB_WB \
+    --update-rule roll-up \
+    --epochs      300 \
+    --batch-size  512 \
+    --hidden-layers 6 \
+    --hidden-size   256 \
+    --no-skip-connections \
+    --beta-spot   0.60 \
+    --beta-ir     0.60 \
+    --price-weight 0.10 \
+    --seed        42 \
+    --save-dir    paper/surrogate_GMDB_WB_rollup
+#  Outputs:
+#    paper/surrogate_GMDB_WB_rollup/sobolev_GMDB_WB_report.pdf
+#    paper/surrogate_GMDB_WB_rollup/sobolev_GMDB_WB_metrics.json
+#    paper/surrogate_GMDB_WB_rollup/sobolev_GMDB_WB_model.pt
+
+# 8-E.  Train all 27 Sobolev models
+#  Paste or run step 5a–5c above.  Requires ~3 h on the EPYC 7502P (64 t).
+
+
+################################################################################

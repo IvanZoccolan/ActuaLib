@@ -1,0 +1,1956 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>LIBRARY_GUIDE</title>
+  <style>
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      white-space: pre-wrap;
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <script defer=""
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js"
+  type="text/javascript"></script>
+</head>
+<body>
+<!-- markdownlint-disable MD033 MD010 MD024 -->
+<h1 id="actualib-user-guide">ActuaLib User Guide</h1>
+<style>
+:root {
+    --manual-bg: #f7fafc;
+    --manual-panel: #ffffff;
+    --manual-ink: #173042;
+    --manual-muted: #547082;
+    --manual-accent: #0f766e;
+    --manual-accent-2: #164e63;
+    --manual-border: #d8e3ea;
+    --manual-code-bg: #0f1720;
+    --manual-code-ink: #e6edf3;
+    --manual-shadow: 0 10px 28px rgba(15, 23, 42, 0.08);
+}
+
+body {
+    line-height: 1.72;
+}
+
+.toc-shell {
+    max-height: calc(100vh - 48px);
+    display: flex;
+    flex-direction: column;
+}
+
+.toc-shell .toc {
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 0.35rem;
+    scrollbar-gutter: stable;
+}
+
+.toc-shell .toc::-webkit-scrollbar {
+    width: 0.55rem;
+}
+
+.toc-shell .toc::-webkit-scrollbar-thumb {
+    background: rgba(84, 112, 130, 0.35);
+    border-radius: 999px;
+}
+
+.toc-shell .toc::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+@media (max-width: 980px) {
+    .toc-shell {
+        max-height: none;
+    }
+
+    .toc-shell .toc {
+        overflow: visible;
+        padding-right: 0;
+    }
+    }
+
+.manual-hero {
+    margin: 1.2rem 0 1.6rem;
+    padding: 1.6rem 1.5rem;
+    background: linear-gradient(135deg, #f0fdfa 0%, #eff6ff 55%, #f8fafc 100%);
+    border: 1px solid var(--manual-border);
+    border-radius: 22px;
+    box-shadow: var(--manual-shadow);
+}
+
+.manual-kicker {
+    margin: 0 0 0.35rem;
+    font-size: 0.82rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--manual-accent);
+}
+
+.manual-lead {
+    margin: 0.8rem 0 0;
+    color: var(--manual-muted);
+    font-size: 1.02rem;
+}
+
+.manual-note {
+    margin: 1.1rem 0 1.8rem;
+    padding: 0.95rem 1rem;
+    border-left: 4px solid var(--manual-accent);
+    background: #f8fffe;
+    border-radius: 0 14px 14px 0;
+    color: var(--manual-ink);
+}
+
+.manual-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    margin: 1.3rem 0 1.9rem;
+}
+
+.manual-tabs a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.72rem 1.02rem;
+    border-radius: 999px;
+    border: 1px solid #bcd0da;
+    background: linear-gradient(180deg, #ffffff 0%, #f3f8fb 100%);
+    color: var(--manual-accent-2);
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 0.95rem;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05);
+}
+
+.manual-tabs a:hover {
+    background: linear-gradient(180deg, #ecfeff 0%, #eff6ff 100%);
+    border-color: #8bb7c8;
+    color: #0f172a;
+}
+
+.manual-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+    margin: 1.2rem 0 2rem;
+}
+
+.manual-card {
+    padding: 1rem 1rem 1.05rem;
+    background: var(--manual-panel);
+    border: 1px solid var(--manual-border);
+    border-radius: 18px;
+    box-shadow: var(--manual-shadow);
+}
+
+.manual-card strong {
+    display: block;
+    margin-bottom: 0.4rem;
+    color: var(--manual-accent-2);
+}
+
+.manual-card p {
+    margin: 0;
+    color: var(--manual-muted);
+    font-size: 0.95rem;
+}
+
+h2 {
+    margin-top: 2.6rem;
+    padding-bottom: 0.45rem;
+    border-bottom: 2px solid #e2ebf0;
+}
+
+h3 {
+    margin-top: 1.8rem;
+    color: var(--manual-accent-2);
+}
+
+h1 .anchor,
+h2 .anchor,
+h3 .anchor,
+h4 .anchor,
+h5 .anchor,
+h6 .anchor,
+.anchorjs-link,
+.header-anchor,
+.markdown-header-anchor,
+.hash-link,
+a.anchor {
+    display: none !important;
+    visibility: hidden !important;
+    width: 0 !important;
+    overflow: hidden !important;
+    text-decoration: none !important;
+}
+
+pre {
+    padding: 1rem 1.1rem;
+    border-radius: 16px;
+    background: var(--manual-code-bg) !important;
+    color: var(--manual-code-ink) !important;
+    border: 1px solid #1f2d3a;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+code {
+    border-radius: 6px;
+}
+
+blockquote {
+    margin: 1.1rem 0;
+    padding: 0.85rem 1rem;
+    background: #f8fafc;
+    border-left: 4px solid #94a3b8;
+    border-radius: 0 14px 14px 0;
+}
+
+hr {
+    border: 0;
+    height: 1px;
+    margin: 2rem 0;
+    background: linear-gradient(90deg, transparent, #cbd5e1, transparent);
+}
+
+.back-to-tabs {
+    margin-top: 1rem;
+    font-size: 0.92rem;
+}
+
+.back-to-tabs a {
+    color: var(--manual-accent);
+    text-decoration: none;
+    font-weight: 700;
+}
+
+@media (max-width: 900px) {
+    .manual-hero {
+        padding: 1.2rem 1rem;
+    }
+
+    .manual-tabs a {
+        width: 100%;
+        justify-content: flex-start;
+    }
+}
+</style>
+<div class="manual-hero">
+<pre><code>&lt;p class=&quot;manual-kicker&quot;&gt;User Guide&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;ActuaLib&lt;/strong&gt; is a C++17 actuarial valuation framework whose core aim is to compute fair market values and market risk sensitivities for life-contingent liabilities using one consistent Monte Carlo plus AAD workflow.&lt;/p&gt;
+&lt;p class=&quot;manual-lead&quot;&gt;In practical terms, the library combines scenario generation, liability projection, simulation, and reverse-mode differentiation so users can produce FMV and Greeks from the same valuation code path. The framework is life-insurance oriented by design, and the current concrete product set in this repository is variable annuities, including nine implemented guaranteed-benefit riders.&lt;/p&gt;</code></pre>
+</div>
+<div class="manual-note">
+<pre><code>The navigation below is intentionally styled like a tab bar. Each tab jumps to one part of the library, with the emphasis on practical use: what the module is for, when you would use it, and which implementation details matter for results.</code></pre>
+</div>
+<div id="module-tabs" class="manual-tabs">
+<pre><code>&lt;a href=&quot;#overview&quot;&gt;Overview&lt;/a&gt;
+&lt;a href=&quot;#aad&quot;&gt;AAD&lt;/a&gt;
+&lt;a href=&quot;#concurrency&quot;&gt;Concurrency&lt;/a&gt;
+&lt;a href=&quot;#math&quot;&gt;Math&lt;/a&gt;
+&lt;a href=&quot;#demographics&quot;&gt;Demographics&lt;/a&gt;
+&lt;a href=&quot;#esg&quot;&gt;ESG&lt;/a&gt;
+&lt;a href=&quot;#monte-carlo&quot;&gt;Monte Carlo&lt;/a&gt;
+&lt;a href=&quot;#products&quot;&gt;Products&lt;/a&gt;
+&lt;a href=&quot;#examples-and-tests&quot;&gt;Examples &amp; Tests&lt;/a&gt;</code></pre>
+</div>
+<div class="manual-grid">
+<pre><code>&lt;div class=&quot;manual-card&quot;&gt;
+    &lt;strong&gt;AAD&lt;/strong&gt;
+    &lt;p&gt;How ActuaLib computes Greeks from the same valuation code used for FMV.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;manual-card&quot;&gt;
+    &lt;strong&gt;Concurrency&lt;/strong&gt;
+    &lt;p&gt;How large simulations are distributed across workers while keeping ownership deterministic.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;manual-card&quot;&gt;
+    &lt;strong&gt;Math&lt;/strong&gt;
+    &lt;p&gt;Numerical utilities used by the market models and simulation engines.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;manual-card&quot;&gt;
+    &lt;strong&gt;Monte Carlo&lt;/strong&gt;
+    &lt;p&gt;Serial, parallel, and AAD-aware simulation flows built on one path contract.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;manual-card&quot;&gt;
+    &lt;strong&gt;Products&lt;/strong&gt;
+    &lt;p&gt;Life and VA guarantee implementations built on a shared monthly projection skeleton.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;manual-card&quot;&gt;
+    &lt;strong&gt;ESG&lt;/strong&gt;
+    &lt;p&gt;The implemented market models: curves, inner pricing dynamics, and real-world outer scenarios.&lt;/p&gt;
+&lt;/div&gt;</code></pre>
+</div>
+<hr />
+<h2 id="overview">Overview</h2>
+<p>ActuaLib’s overall purpose is straightforward: represent an insurance
+liability contract, generate market and actuarial states, project cash
+flows, discount and aggregate to fair market value, then compute risk
+sensitivities from that same valuation logic. The framework is therefore
+not just a collection of pricing utilities. It is an end-to-end
+valuation and risk engine.</p>
+<p>The codebase is organized as a layered system. <code>math</code> and
+<code>aad</code> provide numerical and differentiation primitives.
+<code>concurrency</code> and <code>montecarlo</code> provide execution
+and simulation orchestration. <code>esg</code>,
+<code>demographics</code>, and <code>products</code> hold the market,
+mortality, and contract-projection logic users most often modify.
+<code>examples</code> and <code>tests</code> document the intended
+composition pattern in executable form.</p>
+<p>The key architectural principle is scalar-generic implementation:
+models and products are templated on <code>T</code>, usually
+<code>double</code> or <code>Number</code>. With
+<code>T = double</code>, the run is pure pricing. With
+<code>T = Number</code>, the same operations become differentiable.</p>
+<p>Risk derivatives with respect to model parameters are computed with
+Adjoint Algorithmic Differentiation (AAD) rather than bump-and-revalue
+finite differences. This follows the approach introduced to the
+financial community by Giles and Glasserman, <em>Smoking Adjoints: fast
+evaluation of Greeks in Monte Carlo calculations</em> (2005),
+https://api.semanticscholar.org/CorpusID:18679334.</p>
+<p>Current product scope is best summarized as: life-insurance valuation
+framework, currently populated with variable-annuity guarantee products.
+In this repository, the concrete shipped riders are the nine VA rider
+types exposed by <code>makeRider()</code> (<code>GMDB</code>,
+<code>GMMB</code>, <code>GMAB</code>, <code>GMWB</code>,
+<code>GMIB</code>, <code>GMDB_AB</code>, <code>GMDB_MB</code>,
+<code>GMDB_WB</code>, <code>GMDB_IB</code>).</p>
+<p>At runtime, data flow is: product defines timeline and
+<code>SampleDef</code>, model fills <code>Scenario&lt;T&gt;</code>,
+Monte Carlo runs pathwise liability projection and aggregation, then AAD
+back-propagates derivatives to taped inputs. Parallel execution clones
+model and RNG state per worker and assigns deterministic tape slots,
+while preserving the same user-facing valuation workflow.</p>
+<pre class="text"><code>products -&gt; projection timeline + SampleDef
+esg/model -&gt; generatePath(...) into Scenario&lt;T&gt;
+montecarlo -&gt; run paths, aggregate outputs
+aad -&gt; back-propagate adjoints if T = Number
+concurrency -&gt; schedule parallel work when enabled</code></pre>
+<h3 id="top-level-map">Top-Level Map</h3>
+<pre class="text"><code>ActuaLib/
+|- aad/             reverse-mode scalar/tape implementation
+|- concurrency/     task queue, executor pool, ThreadPool facade
+|- demographics/    mortality abstractions and concrete tables
+|- esg/             market models, yield curves, scenario generators
+|- math/            matrices, interpolation, Cholesky, RNG engines
+|- montecarlo/      path layout and serial/parallel simulation
+|- products/        life and VA liability definitions
+|- examples/        runnable reference compositions
+`- tests/           low-level and regression coverage</code></pre>
+<p class="back-to-tabs">
+<a href="#module-tabs">Back to tabs</a>
+</p>
+<hr />
+<h2 id="aad">AAD</h2>
+<p>Adjoint Algorithmic Differentiation (AAD) is a programmatic way to
+compute exact first-order sensitivities of a numerical valuation, up to
+machine precision, by applying the chain rule to the sequence of
+operations executed by code. For actuarial and derivatives workloads
+this is important because, when one valuation output depends on many
+risk factors, reverse mode (adjoint mode) computes all corresponding
+input sensitivities at a cost that is typically a small multiple of one
+valuation run, rather than one extra full run per bump.</p>
+<p>For actuarial users, the practical intuition is: run the valuation
+once to produce the liability value and store the local calculation
+trail, then run a backward pass that propagates sensitivity
+contributions from output back to market and contract inputs. In Monte
+Carlo settings, this fits naturally with pathwise differentiation: each
+path contributes both value and gradient information, and gradients are
+aggregated with the same simulation logic.</p>
+<p>In implementation terms, reverse mode needs recorded forward
+information because backward sensitivities depend on intermediate states
+computed earlier. That recorded forward information is the tape. It is
+not a market data time series; it is a computational record of the
+valuation path used to propagate adjoints correctly in reverse
+order.</p>
+<p>In ActuaLib, the <code>aad</code> module implements this reverse-mode
+engine with explicit tape records rather than a large
+expression-template graph. The public scalar type is
+<code>ActuaLib::Number</code>, defined in <code>aad/number.hpp</code>.
+<code>Number</code> is the type upper layers use whenever they want a
+value to participate in differentiation. From the perspective of product
+or model code, it behaves like a scalar with arithmetic operators and
+selected math functions. From the perspective of the tape, each active
+operation appends a node with parent references and local partial
+derivatives.</p>
+<p>The core storage object is <code>gradient_tape</code> in
+<code>aad/gradient_tape.hpp</code>. The tape stores
+<code>op_record</code> nodes in a <code>tape_arena</code> and maintains
+a parallel adjoint vector indexed by slot. That layout matters. It means
+reverse propagation is a simple backward walk over contiguous storage
+rather than a pointer chase across heap-allocated nodes. When
+performance problems appear in differentiated runs, this data layout is
+the first reason the implementation stays tractable.</p>
+<p>One of the most important details in this module is mark/rewind
+semantics. AAD Monte Carlo is not implemented by taping all paths on one
+endlessly growing graph. Instead, model parameters are taped once, then
+the tape is marked after the static setup phase. Each path rewinds to
+that mark, evaluates one payoff, and propagates only to the mark. After
+all paths in a batch are processed, the marked region is propagated once
+more back to the original taped parameters. That keeps tape growth
+bounded and gives the simulation code a stable lifecycle to work
+with.</p>
+<h3 id="key-types">Key Types</h3>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> Tape <span class="op">=</span> gradient_tape<span class="op">;</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> Node <span class="op">{</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">static</span> <span class="dt">size_t</span> numAdj<span class="op">;</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Number <span class="op">{</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span><span class="op">:</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">static</span> <span class="at">thread_local</span> Tape<span class="op">*</span> tape<span class="op">;</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>    <span class="dt">void</span> putOnTape<span class="op">();</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    <span class="dt">double</span><span class="op">&amp;</span> adjoint<span class="op">();</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>    <span class="dt">void</span> propagateToStart<span class="op">();</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>    <span class="dt">void</span> propagateToMark<span class="op">();</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">static</span> <span class="dt">void</span> propagateMarkToStart<span class="op">();</span></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span></code></pre></div>
+<h3 id="typical-aad-setup">Typical AAD Setup</h3>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&quot;aad/AAD.hpp&quot;</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> ActuaLib<span class="op">;</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>Tape tape<span class="op">;</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>Number<span class="op">::</span>tape <span class="op">=</span> <span class="op">&amp;</span>tape<span class="op">;</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>Number x<span class="op">(</span><span class="fl">100.0</span><span class="op">);</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>Number y<span class="op">(</span><span class="fl">0.03</span><span class="op">);</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>x<span class="op">.</span>putOnTape<span class="op">();</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>y<span class="op">.</span>putOnTape<span class="op">();</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>tape<span class="op">.</span>mark<span class="op">();</span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>Number z <span class="op">=</span> x <span class="op">*</span> exp<span class="op">(</span>y<span class="op">);</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>z<span class="op">.</span>propagateToMark<span class="op">();</span></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>Number<span class="op">::</span>propagateMarkToStart<span class="op">();</span></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a><span class="dt">double</span> dz_dx <span class="op">=</span> x<span class="op">.</span>adjoint<span class="op">();</span></span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a><span class="dt">double</span> dz_dy <span class="op">=</span> y<span class="op">.</span>adjoint<span class="op">();</span></span></code></pre></div>
+<h3 id="implementation-notes">Implementation Notes</h3>
+<ul>
+<li><code>Number::putOnTape()</code> upgrades a passive scalar into an
+active taped leaf. If a variable is never put on tape, it will not
+contribute to adjoints.</li>
+<li><code>choose_tape(...)</code> in the scalar implementation ensures
+binary operations use the correct active tape when one or both operands
+are active.</li>
+<li><code>AAD.hpp</code> intentionally stays small. It is a convenience
+layer that exposes the operational helpers the rest of the library needs
+without forcing upper layers to know tape internals.</li>
+<li><code>Node::numAdj</code> exists to preserve the result-count
+contract used by the rest of the codebase, even though the current
+implementation is centered on scalar reverse-mode accumulation.</li>
+</ul>
+<p class="back-to-tabs">
+<a href="#module-tabs">Back to tabs</a>
+</p>
+<hr />
+<h2 id="concurrency">Concurrency</h2>
+<p>The <code>concurrency</code> module provides a single execution
+abstraction for the whole library: <code>ThreadPool</code> is the public
+facade, and <code>executor_pool</code> is the real scheduler. This split
+is intentional. Upper layers depend on a stable singleton API, while the
+scheduling implementation can stay focused on worker lifecycle, queue
+semantics, and task submission. The result is a small surface area for
+callers and a testable, explicit execution engine underneath.</p>
+<p><code>executor_pool</code> uses
+<code>std::packaged_task&lt;bool(void)&gt;</code> for units of work and
+<code>std::future&lt;bool&gt;</code> as the handle type. That design
+allows the simulation layer to submit arbitrary closures while still
+retaining future-based synchronization semantics. It also means the pool
+does not need a custom task abstraction beyond aliases. If you are
+tracing a parallel pricing issue, the first types to keep in mind are
+<code>Task</code>, <code>task_handle</code>, and
+<code>TaskHandle</code>.</p>
+<p>The queue in <code>task_queue.hpp</code> is deliberately simple: a
+mutex, a condition variable, and a FIFO queue. This is not a lock-free
+executor. That is a conscious tradeoff. The library wants deterministic
+worker-slot ownership and predictable shutdown semantics more than it
+wants the lowest possible queue-latency benchmark. For AAD parallelism,
+stable ownership is more valuable than clever queue behavior because
+model clones, RNG clones, and tape slots are indexed by worker
+number.</p>
+<h3 id="public-scheduling-pattern">Public Scheduling Pattern</h3>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&quot;concurrency/threadpool.hpp&quot;</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> ActuaLib<span class="op">;</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>ThreadPool<span class="op">*</span> pool <span class="op">=</span> ThreadPool<span class="op">::</span>getInstance<span class="op">();</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>pool<span class="op">-&gt;</span>start<span class="op">(</span><span class="dv">4</span><span class="op">);</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>TaskHandle job <span class="op">=</span> pool<span class="op">-&gt;</span>spawnTask<span class="op">([]()</span> <span class="op">{</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Do pricing or scenario work here</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="kw">true</span><span class="op">;</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="op">});</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>pool<span class="op">-&gt;</span>activeWait<span class="op">(</span>job<span class="op">);</span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>pool<span class="op">-&gt;</span>stop<span class="op">();</span></span></code></pre></div>
+<h3 id="internal-shape">Internal Shape</h3>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> executor_pool <span class="op">{</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span><span class="op">:</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">using</span> task <span class="op">=</span> <span class="bu">std::</span>packaged_task<span class="op">&lt;</span><span class="dt">bool</span><span class="op">(</span><span class="dt">void</span><span class="op">)&gt;;</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">static</span> executor_pool<span class="op">&amp;</span> instance<span class="op">();</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">static</span> <span class="bu">std::</span>size_t worker_index<span class="op">();</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">template</span> <span class="op">&lt;</span><span class="kw">class</span> Callable<span class="op">&gt;</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>    task_handle submit<span class="op">(</span>Callable<span class="op">&amp;&amp;</span> func<span class="op">);</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>    <span class="dt">bool</span> wait_assist<span class="op">(</span><span class="at">const</span> task_handle<span class="op">&amp;</span> handle<span class="op">);</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span></code></pre></div>
+<h3 id="implementation-notes-1">Implementation Notes</h3>
+<ul>
+<li><code>ThreadPool::threadNum()</code> is not cosmetic. It is used by
+parallel Monte Carlo AAD to pick the correct model clone, path buffer,
+RNG clone, and tape slot.</li>
+<li><code>activeWait()</code> can opportunistically execute queued work
+while waiting on a future. This keeps the caller productive rather than
+blocked.</li>
+<li>Setting <code>ACTUALIB_DISABLE_ACTIVE_STEAL</code> disables that
+work-stealing behavior, which is useful when isolating
+scheduling-sensitive bugs.</li>
+<li><code>start()</code> and <code>stop()</code> are designed to be
+explicit lifecycle boundaries. Examples and tests should normally call
+them deliberately instead of relying on static destruction timing.</li>
+</ul>
+<p class="back-to-tabs">
+<a href="#module-tabs">Back to tabs</a>
+</p>
+<hr />
+<h2 id="math">Math</h2>
+<p>The <code>math</code> module is the library’s implementation floor.
+It contains the small, explicit kernels the financial and Monte Carlo
+code depends on: matrix storage, matrix multiplication, transpose,
+Cholesky factorization, interpolation, curve-filling utilities,
+random-number interfaces, RNG engines, and Gaussian helper functions.
+There is very little abstraction for its own sake here. The emphasis is
+on code that a developer can read quickly and reason about with
+confidence.</p>
+<p><code>math/matrix.hpp</code> provides a compact row-major
+<code>Matrix&lt;T&gt;</code> wrapper backed by a flat
+<code>std::vector&lt;T&gt;</code>. The class exposes direct row access
+through <code>operator[]</code>, which keeps model code easy to read and
+allows low ceremony when assembling covariance and correlation
+structures. The specialized matrix multiply for
+<code>Matrix&lt;double&gt;</code> uses a straightforward triple loop
+with an OpenMP pragma when available. That is an explicit
+performance/numerical-audit tradeoff: the code is simple enough to
+trust, and still fast enough for the problem sizes in this library.</p>
+<p><code>math/cholesky.hpp</code> is central to the equity models. It
+computes a lower-triangular factor using only operations that also exist
+on <code>Number</code>, which is why it can participate in
+differentiated workflows without a separate algorithm. This genericity
+matters even though not every market input is currently on tape. It
+keeps the numeric layer uniform and avoids hidden incompatibilities
+between double and AAD runs.</p>
+<p>The random-number story is split deliberately.
+<code>math/randomnumbers/genericrng.hpp</code> defines the public
+<code>RNG</code> interface used by models and simulation code.
+<code>math/rng</code> contains concrete engine implementations such as
+<code>mrg32k3a_engine</code> and <code>sobol_engine</code>.
+<code>math/randomnumbers/mrg32k3a.hpp</code> and
+<code>math/randomnumbers/sobol.hpp</code> are then thin adapters that
+expose the library’s public RNG types in the style the rest of the code
+expects. That separation makes it easy to clone RNG state in simulation
+code while keeping engine internals isolated.</p>
+<h3 id="matrix-and-cholesky-example">Matrix And Cholesky Example</h3>
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&quot;math/matrix.hpp&quot;</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&quot;math/cholesky.hpp&quot;</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> ActuaLib<span class="op">;</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>Matrix<span class="op">&lt;</span><span class="dt">double</span><span class="op">&gt;</span> corr<span class="op">(</span><span class="dv">2</span><span class="op">,</span> <span class="dv">2</span><span class="op">);</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>corr<span class="op">[</span><span class="dv">0</span><span class="op">][</span><span class="dv">0</span><span class="op">]</span> <span class="op">=</span> <span class="fl">1.0</span><span class="op">;</span> corr<span class="op">[</span><span class="dv">0</span><span class="op">][</span><span class="dv">1</span><span class="op">]</span> <span class="op">=</span> <span class="fl">0.25</span><span class="op">;</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>corr<span class="op">[</span><span class="dv">1</span><span class="op">][</span><span class="dv">0</span><span class="op">]</span> <span class="op">=</span> <span class="fl">0.25</span><span class="op">;</span> corr<span class="op">[</span><span class="dv">1</span><span class="op">][</span><span class="dv">1</span><span class="op">]</span> <span class="op">=</span> <span class="fl">1.0</span><span class="op">;</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>Matrix<span class="op">&lt;</span><span class="dt">double</span><span class="op">&gt;</span> L <span class="op">=</span> cholesky<span class="op">(</span>corr<span class="op">);</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>Matrix<span class="op">&lt;</span><span class="dt">double</span><span class="op">&gt;</span> LT <span class="op">=</span> transpose<span class="op">(</span>L<span class="op">);</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>Matrix<span class="op">&lt;</span><span class="dt">double</span><span class="op">&gt;</span> reconstructed <span class="op">=</span> L <span class="op">*</span> LT<span class="op">;</span></span></code></pre></div>
+<h3 id="rng-example">RNG Example</h3>
+<div class="sourceCode" id="cb12"><pre
+class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&quot;math/randomnumbers/mrg32k3a.hpp&quot;</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> ActuaLib<span class="op">;</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>mrg32k3a rng<span class="op">(</span><span class="dv">12345</span><span class="op">,</span> <span class="dv">12346</span><span class="op">);</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>rng<span class="op">.</span>init<span class="op">(</span><span class="dv">5</span><span class="op">);</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="bu">std::</span>vector<span class="op">&lt;</span><span class="dt">double</span><span class="op">&gt;</span> z<span class="op">;</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>rng<span class="op">.</span>nextG<span class="op">(</span>z<span class="op">);</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a><span class="co">// Jump directly to the state used for path 100</span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>rng<span class="op">.</span>skipTo<span class="op">(</span><span class="dv">100</span><span class="op">);</span></span></code></pre></div>
+<h3 id="implementation-notes-2">Implementation Notes</h3>
+<ul>
+<li><code>math/stats/normal.hpp</code> is the canonical home for
+density, CDF, and inverse-CDF helpers used throughout the library.</li>
+<li><code>math/utils.hpp</code> is not just generic filler code.
+<code>fillData()</code> is used to regularize curves and term grids in
+higher layers.</li>
+<li>The public RNG abstraction exposes both legacy-style methods
+(<code>nextU</code>, <code>nextG</code>, <code>skipTo</code>) and
+engine-style aliases (<code>next_uniform</code>,
+<code>next_gaussian</code>, <code>skip_to</code>).</li>
+</ul>
+<p class="back-to-tabs">
+<a href="#module-tabs">Back to tabs</a>
+</p>
+<hr />
+<h2 id="demographics">Demographics</h2>
+<p>The <code>demographics</code> module isolates mortality logic from
+the financial and numerical layers. The root interface is
+<code>MortalityModel</code>, which exposes survival probability, death
+probability, age bounds, cloning, and a few actuarial convenience
+methods. The important point is not that this interface is small; it is
+that it is intentionally plain-double and independent of the AAD
+tape.</p>
+<p>That design keeps a sharp boundary between actuarial assumptions and
+differentiated market state. Products consume mortality heavily, but the
+library does not currently force mortality through the tape. This keeps
+the taped graph smaller and reflects the way the current risk outputs
+are structured. If you need mortality sensitivities as first-class
+differentiated outputs in the future, this module is where the
+architectural change would start.</p>
+<p>Concrete mortality implementations can remain table-driven and
+actuarially focused because the rest of the library sees only the
+probability interface. That means product code can ask for
+<code>_tp_x</code>-style behavior without caring whether the underlying
+implementation uses a lookup table, interpolation, or something more
+sophisticated.</p>
+<h3 id="mortality-interface-example">Mortality Interface Example</h3>
+<div class="sourceCode" id="cb13"><pre
+class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> MortalityModel <span class="op">{</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span><span class="op">:</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">virtual</span> Probability p<span class="op">(</span><span class="dt">double</span> x<span class="op">,</span> <span class="dt">double</span> t<span class="op">)</span> <span class="at">const</span> <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">virtual</span> Probability q<span class="op">(</span><span class="dt">double</span> x<span class="op">,</span> <span class="dt">double</span> t<span class="op">)</span> <span class="at">const</span> <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">virtual</span> <span class="dt">int</span> minAge<span class="op">()</span> <span class="at">const</span> <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">virtual</span> <span class="dt">int</span> maxAge<span class="op">()</span> <span class="at">const</span> <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">virtual</span> <span class="bu">std::</span>unique_ptr<span class="op">&lt;</span>MortalityModel<span class="op">&gt;</span> clone<span class="op">()</span> <span class="at">const</span> <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span></code></pre></div>
+<h3 id="usage-pattern">Usage Pattern</h3>
+<div class="sourceCode" id="cb14"><pre
+class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="dt">double</span> age <span class="op">=</span> <span class="fl">65.0</span><span class="op">;</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="dt">double</span> oneYearSurvival <span class="op">=</span> mortality<span class="op">.</span>p<span class="op">(</span>age<span class="op">,</span> <span class="fl">1.0</span><span class="op">);</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="dt">double</span> deferredDeath <span class="op">=</span> mortality<span class="op">.</span>deferredQ<span class="op">(</span>age<span class="op">,</span> <span class="fl">5.0</span><span class="op">,</span> <span class="fl">1.0</span><span class="op">);</span></span></code></pre></div>
+<h3 id="implementation-notes-3">Implementation Notes</h3>
+<ul>
+<li>Keep mortality logic self-contained. Products should ask for
+probabilities, not reach into a mortality table representation.</li>
+<li>The module is intentionally free of threading and tape concerns,
+which is part of why it composes cleanly with the rest of the
+system.</li>
+</ul>
+<h3 id="current-mortality-inputs">Current Mortality Inputs</h3>
+<p>The mortality engine defines how a table is interpreted, but it does
+not impose one globally hardcoded production curve across the library.
+In the current codebase, the actual mortality assumption set is supplied
+by the caller, typically through example-level helper functions that
+build explicit age and <code>q_x</code> vectors.</p>
+<p>The mortality assumptions used for variable-annuity work are based on
+the 1996 IAM tables for both male and female lives (SOA source). The
+implementation pattern is:</p>
+<ul>
+<li>integer age grid from <code>5</code> to <code>115</code>;</li>
+<li>one-year death probabilities supplied explicitly as a
+<code>std::vector&lt;double&gt;</code>;</li>
+<li>terminal probability forced to <code>1.0</code> at the highest age
+so the table closes with certain death;</li>
+<li>Uniform Distribution of Deaths interpolation for fractional
+ages.</li>
+</ul>
+<p>Authoritative source citation for these assumptions:</p>
+<p>Robert J. Johansen, “Review of Adequacy of 1983 Individual Annuity
+Mortality Table”, Transactions of the Society of Actuaries, Vol. XLVII
+(1995), Appendix E. Accessed: 04/2013 from
+http://www.soa.org/Library/Research/Transactions-Of-Society-Of-Actuaries/1990-95/1995/January/tsa95v479.aspx</p>
+<p>That last point matters operationally. If the code asks for survival
+or death probabilities over non-integer durations,
+<code>MortalityTable</code> converts annual probabilities into
+intra-year values under the UDD assumption rather than by stepwise
+annual jumps.</p>
+<p>So there are really two levels of mortality assumptions in
+ActuaLib:</p>
+<ol type="1">
+<li>the mortality engine in <code>demographics/mortality.hpp</code>,
+which defines the actuarial interpretation of the table;</li>
+<li>the mortality input vectors created by examples or applications,
+which define the actual calibrated mortality view used in a run.</li>
+</ol>
+<h3 id="where-to-change-mortality-assumptions">Where To Change Mortality
+Assumptions</h3>
+<p>If you want to change mortality behavior, the correct edit point
+depends on the type of change.</p>
+<ul>
+<li>Change <code>demographics/mortality.hpp</code> if you want to change
+the mathematical interpretation of mortality tables.</li>
+<li>Change the mortality-table construction in your application layer if
+you want a different mortality curve in an actual run. On current
+<code>main</code>, the tracked executable surface is
+<code>examples/simulate_rider.cpp</code>, and batched policy generation
+is described in <code>docs/portfolio_training.md</code>.</li>
+<li>Apply the same pattern in any local exploratory examples if you keep
+additional non-tracked driver programs in your worktree.</li>
+</ul>
+<p>For most practical actuarial work, the right change is at the example
+or application level, not inside <code>MortalityTable</code> itself.</p>
+<p class="back-to-tabs">
+<a href="#module-tabs">Back to tabs</a>
+</p>
+<hr />
+<h2 id="esg">ESG</h2>
+<p>The <code>esg</code> module turns market assumptions into valuation
+inputs. In ActuaLib, that means both discounting infrastructure and
+explicit market models. The module is deliberately split into separate
+building blocks rather than one all-purpose scenario engine:</p>
+<ul>
+<li><code>YieldCurve&lt;T&gt;</code> for discount factors and forward
+construction.</li>
+<li><code>MultivariateBlackScholes&lt;T&gt;</code> for inner
+risk-neutral pricing.</li>
+<li><code>RegimeSwitchingGenerator</code> for real-world outer equity
+scenarios.</li>
+<li><code>InterestRateScenarioGenerator</code> for real-world outer
+interest-rate scenarios.</li>
+</ul>
+<p>For users, the important distinction is measure and purpose. The
+inner model is a Q-measure pricing model used to value liabilities
+conditional on a market state. The outer models are P-measure scenario
+generators used to evolve that market state through time. On current
+<code>main</code>, the committed executable that composes those pieces
+end-to-end is <a
+href="../examples/simulate_rider.cpp">examples/simulate_rider.cpp</a>,
+and the higher-level portfolio workflow is described in <a
+href="portfolio_training.md">docs/portfolio_training.md</a>. The
+interested reader can find the real-world and risk-neutral nested
+valuation framework in Gan and Valdez, <em>Nested Stochastic Valuation
+of Large Variable Annuity Portfolios: Monte Carlo Simulation and
+Synthetic Datasets</em>, Data 2018, 3, 31,
+https://doi.org/10.3390/data3030031.</p>
+<h3 id="implemented-models-at-a-glance">Implemented Models At A
+Glance</h3>
+<ol type="1">
+<li>Log-linear discount-curve interpolation with optional bootstrap from
+par swap rates.</li>
+<li>Correlated multivariate Black-Scholes dynamics for inner
+valuation.</li>
+<li>Two-state Markov regime-switching GBM for real-world equity
+evolution.</li>
+<li>A three-state-variable monthly real-world interest-rate generator
+with stochastic volatility, mapped into a Nelson-Siegel style
+curve.</li>
+</ol>
+<h3 id="yield-curve-representation">Yield-Curve Representation</h3>
+<p><code>YieldCurve&lt;T&gt;</code> stores tenors <span
+class="math inline">\(0 = T_0 &lt; T_1 &lt; \dots &lt; T_n\)</span>,
+discount factors <span class="math inline">\(D(T_i)\)</span>, and cached
+values of <span class="math inline">\(\ln D(T_i)\)</span>. For an
+arbitrary maturity <span class="math inline">\(t\)</span>, the
+implementation uses log-linear interpolation:</p>
+<p><span class="math display">\[
+\ln D(t) = (1-w)\ln D(T_i) + w\ln D(T_{i+1}),
+\qquad
+w = \frac{t - T_i}{T_{i+1} - T_i}.
+\]</span></p>
+<p>Hence,</p>
+<p><span class="math display">\[
+D(t) = \exp\bigl(\ln D(t)\bigr).
+\]</span></p>
+<p>Beyond the last tenor, the code extrapolates with the flat forward
+rate implied by the last two knots. The same class also supports
+bootstrap from par swap rates using the fixed-leg identity</p>
+<p><span class="math display">\[
+s_k \sum_{i=1}^{k} \Delta_i D(T_i) = 1 - D(T_k),
+\]</span></p>
+<p>which is solved recursively for each new discount factor. In AAD
+runs, the discount knots can live on tape, so sensitivities to the input
+curve flow naturally through discounting and forward generation.</p>
+<p>In the nested pricing stack, this <code>YieldCurve&lt;T&gt;</code>
+behavior remains the base interpolation/extrapolation rule. In addition,
+<code>MultivariateBlackScholes&lt;T&gt;</code> supports an optional
+Nelson-Siegel-informed tail mode (<code>useNSTail</code>) for maturities
+beyond the last curve knot. When enabled, the tail is shaped using the
+outer-node short/long rate state while remaining anchored to the on-tape
+last discount knot, so curve-risk reporting still maps to the same knot
+basis.</p>
+<p>One implementation detail matters in practice: <span
+class="math inline">\(D(0)\)</span> is treated as structurally fixed,
+and <code>refreshLogDiscountsFromDiscountFactors()</code> explicitly
+resets <span class="math inline">\(\ln D(0)=0\)</span>. This prevents
+stale tape edges through the origin knot after rewind cycles.</p>
+<h3 id="hull-white-one-factor-inner-interest-rate-model">Hull-White
+One-Factor Inner Interest-Rate Model</h3>
+<p><code>HullWhiteBlackScholes&lt;T&gt;</code> extends the inner pricing
+model with a stochastic risk-neutral short rate calibrated to the outer
+AIRG yield curve at each outer scenario node. The short rate follows the
+Hull-White one-factor (HW1F) model under <span
+class="math inline">\(Q\)</span>:</p>
+<p><span class="math display">\[
+dr_t = \bigl[\theta(t) - a\,r_t\bigr]\,dt + \sigma\,dW_t^Q,
+\]</span></p>
+<p>where <span class="math inline">\(\theta(t)\)</span> is uniquely
+determined by the requirement that the model reproduces the outer yield
+curve exactly at <span class="math inline">\(t = 0\)</span>.</p>
+<p><strong>Exact discrete transition</strong> (no Euler error):</p>
+<p><span class="math display">\[
+r_{i+1} = c_1\,r_i + c_{2,i} + c_3\,Z_i^{\text{rate}}, \qquad
+Z_i^{\text{rate}} \sim N(0,1),
+\]</span></p>
+<p>with precomputed constants <span class="math display">\[
+c_1 = e^{-a\,\Delta t}, \quad
+c_3 = \sigma\sqrt{\frac{1 - e^{-2a\Delta t}}{2a}}, \quad
+c_{2,i} = \alpha(t_{i+1}) - \alpha(t_i)\,c_1,
+\]</span> <span class="math display">\[
+\alpha(t) = f^M(0,t) + \frac{\sigma^2}{2a^2}(1 - e^{-at})^2,
+\]</span> where <span class="math inline">\(f^M(0,t) \approx [\ln D^M(t)
+- \ln D^M(t+\Delta t)]/\Delta t\)</span> is the instantaneous forward
+rate from the outer AIRG curve. The shape constants <span
+class="math inline">\(c_1\)</span> and <span
+class="math inline">\(c_3\)</span> depend only on the HW parameters
+<span class="math inline">\((a,\sigma)\)</span> and are plain off-tape
+doubles. The curve-dependent parts — the initial short rate <span
+class="math display">\[
+r_0 = -\frac{\ln D^M(\Delta t)}{\Delta t}
+\]</span> and the per-step drift shifts <span
+class="math inline">\(c_{2,i}\)</span> — are computed <strong>on the AAD
+tape</strong> via
+<code>HullWhite1F::computeOnTapeParts&lt;T&gt;()</code>, so every
+short-rate realisation <span class="math inline">\(r_i\)</span>
+propagates adjoints back to the outer yield-curve knots.</p>
+<p><strong>Analytic path-dependent numeraire</strong> (on AAD tape):</p>
+<p>The money-market account <span class="math inline">\(B(t_m) =
+1/D^{\text{path}}(0,t_m)\)</span> is accumulated step by step using the
+analytic HW one-step discount:</p>
+<p><span class="math display">\[
+P^{\mathrm{HW}}(t_i,\,t_{i+1}) = A_i\,e^{-B(\Delta t)\,r_i}, \qquad
+B(\Delta t) = \frac{1 - e^{-a\Delta t}}{a},
+\]</span></p>
+<p><span class="math display">\[
+\ln A_i = \Bigl(1 - \tfrac{B(\Delta t)}{\Delta t}\Bigr)\bigl[\ln
+D^M(t_{i+1}) - \ln D^M(t_i)\bigr] - \frac{\sigma^2 B(\Delta
+t)^2(1-e^{-2at_i})}{4a}.
+\]</span></p>
+<p><span class="math inline">\(\ln A_i\)</span> is precomputed in
+<code>init()</code> using the on-tape curve discount factors <span
+class="math inline">\(D^M(t_i)\)</span>, <span
+class="math inline">\(D^M(t_{i+1})\)</span>, contributing one channel of
+IR Greek through the numeraire. The dominant channel is the full HW
+calibration: <span class="math inline">\(r_0\)</span> and <span
+class="math inline">\(c_{2,i}\)</span> are also placed on the tape (via
+<code>computeOnTapeParts&lt;T&gt;()</code>), so the adjoint propagates
+through the entire short-rate recurrence <span class="math display">\[
+r_{i+1} = c_1\,r_i + c_{2,i} + c_3\,Z_i
+\]</span> back to the outer curve knots at every step.</p>
+<p><strong>Equity drift</strong> at each step uses the realised short
+rate <span class="math inline">\(r_i\)</span> (on tape, type
+<code>T</code>) rather than the static-curve forward rate used by
+<code>MultivariateBlackScholes</code>, so equity paths also carry IR
+sensitivity through the drift. The dividend yield <span
+class="math inline">\(q_k\)</span> remains on tape for its own
+sensitivity.</p>
+<p><strong>AAD tape layout</strong> (same parameters as
+<code>MultivariateBlackScholes</code>):</p>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>Parameter group</th>
+<th>On tape?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Spots <span class="math inline">\(S_k(0)\)</span></td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Dividend yields <span class="math inline">\(q_k\)</span></td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Outer curve knots <span class="math inline">\(D^M(T_j)\)</span></td>
+<td>Yes — via <span class="math inline">\(\ln A_i\)</span>
+<strong>and</strong> via on-tape <span
+class="math inline">\(r_0\)</span>, <span
+class="math inline">\(c_{2,i}\)</span></td>
+</tr>
+<tr>
+<td>Vols <span class="math inline">\(\sigma_k\)</span>, correlations
+<span class="math inline">\(\rho_{ij}\)</span></td>
+<td>No (plain doubles)</td>
+</tr>
+<tr>
+<td>HW parameters <span class="math inline">\(a\)</span>, <span
+class="math inline">\(\sigma\)</span></td>
+<td>No (plain doubles)</td>
+</tr>
+<tr>
+<td>Short rate <span class="math inline">\(r_t\)</span></td>
+<td>Yes — <span class="math inline">\(T\)</span>-typed; adjoints
+propagate through the full HW recurrence</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Simulation dimension</strong>: <span
+class="math inline">\((d+1)\times\text{nSteps}\)</span>, with <span
+class="math inline">\(d\)</span> equity draws and 1 rate draw per
+step.</p>
+<p><strong>Enabling HW inner rates</strong> in a nested simulation:</p>
+<div class="sourceCode" id="cb15"><pre
+class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>NestedSimConfig config<span class="op">;</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>config<span class="op">.</span>useHullWhiteInner <span class="op">=</span> <span class="kw">true</span><span class="op">;</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>config<span class="op">.</span>hwParams<span class="op">.</span>a     <span class="op">=</span> <span class="fl">0.05</span><span class="op">;</span>   <span class="co">// mean-reversion speed</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>config<span class="op">.</span>hwParams<span class="op">.</span>sigma <span class="op">=</span> <span class="fl">0.01</span><span class="op">;</span>   <span class="co">// short-rate vol</span></span></code></pre></div>
+<p>When <code>useHullWhiteInner = false</code> (default),
+<code>buildInnerModel()</code> creates
+<code>MultivariateBlackScholes</code> with the static outer curve,
+preserving the existing behaviour exactly.</p>
+<p><strong>Note on negative rates</strong>: HW1F admits negative short
+rates. For the short inner projection horizons typical of VA pricing (≤
+1 year), the probability of reaching significantly negative values from
+a positive starting rate is negligible at standard parameter values
+(<span class="math inline">\(a \approx 0.05\)</span>, <span
+class="math inline">\(\sigma \approx 0.01\)</span>).</p>
+<p><strong>References</strong>: Hull and White (1990), <em>Review of
+Financial Studies</em> 3(4):573–592; Hull (2022), <em>Options, Futures
+and Other Derivatives</em>, 11th ed., ch. 32.</p>
+<h3 id="multivariate-black-scholes-inner-model">Multivariate
+Black-Scholes Inner Model</h3>
+<p><code>MultivariateBlackScholes&lt;T&gt;</code> is the inner
+risk-neutral model used to value liabilities conditional on the market
+state handed over by the outer simulation. For asset <span
+class="math inline">\(k\)</span> under the pricing measure <span
+class="math inline">\(Q\)</span>, the model is</p>
+<p><span class="math display">\[
+\frac{dS_k(t)}{S_k(t)} = \bigl(r(t) - q_k\bigr)dt + \sigma_k\,
+dW_k^Q(t),
+\qquad
+dW_i^Q dW_j^Q = \rho_{ij}\,dt.
+\]</span></p>
+<p>In the implementation:</p>
+<ul>
+<li>spots <span class="math inline">\(S_k(0)\)</span> are on tape when
+<code>T = Number</code>;</li>
+<li>dividend yields <span class="math inline">\(q_k\)</span> are on
+tape;</li>
+<li>curve discount knots are on tape;</li>
+<li>optional NS tail inputs (<code>nsShortRate</code>,
+<code>nsLongRate</code>) are off tape and affect only long-end curve
+shape;</li>
+<li>volatilities <span class="math inline">\(\sigma_k\)</span> and
+correlations <span class="math inline">\(\rho_{ij}\)</span> remain off
+tape as plain doubles.</li>
+</ul>
+<p>The covariance matrix is assembled as</p>
+<p><span class="math display">\[
+\Sigma_{ij} = \sigma_i\sigma_j\rho_{ij},
+\]</span></p>
+<p>and a Cholesky factor <span class="math inline">\(L\)</span> is
+computed so that <span class="math inline">\(\Sigma = LL^\top\)</span>.
+If <span class="math inline">\(Z \sim N(0, I)\)</span>, correlated
+Gaussian shocks are obtained as <span class="math inline">\(LZ\)</span>.
+The model then fills numeraires, forward prices, discount factors, and
+Libor-like quantities into <code>Scenario&lt;T&gt;</code> according to
+the product’s <code>SampleDef</code>. This is the model that produces
+market-consistent values and AAD Greeks at a given outer node.</p>
+<h3 id="real-world-regime-switching-equity-model">Real-World
+Regime-Switching Equity Model</h3>
+<p><code>RegimeSwitchingGenerator</code> implements a two-state
+Markov-modulated GBM for outer-loop equity evolution under the
+real-world measure. The regime <span class="math inline">\(Z_t \in
+\{1,2\}\)</span> is interpreted as a bull or bear state. Monthly
+transitions are derived from annualized transition intensities
+<code>p12</code> and <code>p21</code> using <span
+class="math inline">\(\Delta t = 1/12\)</span>:</p>
+<p><span class="math display">\[
+P(Z_{t+\Delta t}=2 \mid Z_t=1) \approx p_{12}\Delta t,
+\qquad
+P(Z_{t+\Delta t}=1 \mid Z_t=2) \approx p_{21}\Delta t.
+\]</span></p>
+<p>Within regime <span class="math inline">\(r\)</span>, asset <span
+class="math inline">\(k\)</span> follows</p>
+<p><span class="math display">\[
+\frac{dS_k(t)}{S_k(t)} = \mu_{r,k}\,dt + \sigma_{r,k}\, dW_k^P(t),
+\]</span></p>
+<p>with covariance matrix</p>
+<p><span class="math display">\[
+\Sigma_r(i,j) = \sigma_{r,i}\sigma_{r,j}\rho_{ij}.
+\]</span></p>
+<p>The implementation samples independent standard normals <span
+class="math inline">\(Z\)</span>, correlates them with the
+regime-dependent Cholesky factor <span
+class="math inline">\(L_r\)</span>, and forms monthly growth factors</p>
+<p><span class="math display">\[
+G_{r,k} = \exp\!\left[\left(\mu_{r,k} -
+\tfrac12\sigma_{r,k}^2\right)\Delta t + \sqrt{\Delta t}(L_r Z)_k\right].
+\]</span></p>
+<p>The container <a
+href="../esg/rw_scenarios.hpp">esg/rw_scenarios.hpp</a> stores those
+growth factors path by path, and spot levels are reconstructed by
+cumulative multiplication. This model is intended for long-horizon outer
+projections where regime persistence and stress behavior matter.</p>
+<h3 id="real-world-interest-rate-scenario-generator">Real-World
+Interest-Rate Scenario Generator</h3>
+<p><code>InterestRateScenarioGenerator</code> is a monthly real-world
+rate model with three state variables:</p>
+<ol type="1">
+<li>log-volatility,</li>
+<li>log long rate,</li>
+<li>the long-minus-short spread.</li>
+</ol>
+<p>The implemented dynamics are</p>
+<p><span class="math display">\[
+\ln \sigma_{t+1} = (1-\beta_3)\ln \sigma_t + \beta_3\ln \tau_3 +
+\sigma_3\varepsilon_{3,t},
+\]</span></p>
+<p><span class="math display">\[
+\ln r^L_{t+1} = (1-\beta_1)\ln r^L_t + \beta_1\ln \tau_1 + \psi(\tau_2 -
+d_t) + e^{\ln \sigma_{t+1}}\varepsilon_{1,t},
+\]</span></p>
+<p><span class="math display">\[
+d_{t+1} = (1-\beta_2)d_t + \beta_2\tau_2 + \phi(\ln r^L_t - \ln \tau_1)
++ \sigma_2\varepsilon_{2,t}(r^L_{t+1})^{\theta}.
+\]</span></p>
+<p>The short rate is recovered as</p>
+<p><span class="math display">\[
+r^S_{t+1} = r^L_{t+1} - d_{t+1},
+\]</span></p>
+<p>with explicit lower and upper bounds enforced on rates and volatility
+for robustness. The shocks <span
+class="math inline">\((\varepsilon_1,\varepsilon_2,\varepsilon_3)\)</span>
+are correlated through a 3 by 3 Cholesky factor built from
+<code>rho12</code>, <code>rho13</code>, and <code>rho23</code>.</p>
+<p>This is not implemented as a textbook affine term-structure model. It
+is a practical actuarial-style ESG generator whose role in ActuaLib is
+to produce plausible real-world outer curves for nested valuation. The
+model is the AIRG (Academy Interest Rate Generator) developed by the
+American Academy of Actuaries’ Economic Scenario Work Group (ESWG); it
+is the mandated scenario generator for C3 Phase I/II/III and VM-20
+regulatory capital calculations in the United States. Support contact:
+ESGhelp@SOA.org. Workbooks and documentation: actuary.org.</p>
+<h3 id="nelson-siegel-curve-construction">Nelson-Siegel Curve
+Construction</h3>
+<p>After updating the short and long rates, the generator converts them
+into a full curve using a one-factor Nelson-Siegel shape with fixed
+decay parameter <code>k = 0.4</code>. For maturity <span
+class="math inline">\(T\)</span>, the continuously compounded yield
+is</p>
+<p><span class="math display">\[
+y(T) = b_0 + b_1\frac{1 - e^{-kT}}{kT},
+\]</span></p>
+<p>where <span class="math inline">\(b_0\)</span> and <span
+class="math inline">\(b_1\)</span> are chosen so that the constructed
+curve matches the simulated short and long rates. Discount factors are
+then formed as</p>
+<p><span class="math display">\[
+D(0,T) = e^{-y(T)T}.
+\]</span></p>
+<p>The implemented maturity grid is <span
+class="math inline">\(0.25\)</span>, <span
+class="math inline">\(0.5\)</span>, <span
+class="math inline">\(1\)</span>, <span
+class="math inline">\(2\)</span>, <span
+class="math inline">\(3\)</span>, <span
+class="math inline">\(5\)</span>, <span
+class="math inline">\(7\)</span>, <span
+class="math inline">\(10\)</span>, <span
+class="math inline">\(20\)</span>, and <span
+class="math inline">\(30\)</span> years, with an explicit <span
+class="math inline">\(t=0\)</span> anchor. This remains the base curve
+consumed downstream by nested pricing; when <code>useNSTail</code> is
+enabled, the inner model keeps this knot basis for risk reporting but
+uses the outer short/long-rate state to shape long-end discounting
+beyond the last knot.</p>
+<h3 id="representative-nested-calibration">Representative Nested
+Calibration</h3>
+<p>The library provides reusable ESG building blocks, but the detailed
+calibration below should now be read as a representative nested setup
+rather than as the canonical tracked entry point on <code>main</code>.
+The actively tracked executable surface in this branch is
+<code>examples/simulate_rider.cpp</code>, and the batched training
+workflow is documented in <code>docs/portfolio_training.md</code>. Use
+those for current end-to-end runs.</p>
+<h4 id="real-world-equity-parameters">Real-World Equity Parameters</h4>
+<p>The outer equity scenario generator currently uses
+<code>RSParams</code> with five indices:</p>
+<ul>
+<li><code>nIndices = 5</code></li>
+<li>bull-regime drifts
+<code>mu1 = {0.09, 0.10, 0.08, 0.035, 0.020}</code></li>
+<li>bull-regime volatilities
+<code>sigma1 = {0.16, 0.22, 0.18, 0.05, 0.01}</code></li>
+<li>bear-regime drifts
+<code>mu2 = {-0.08, -0.12, -0.09, 0.010, 0.015}</code></li>
+<li>bear-regime volatilities
+<code>sigma2 = {0.28, 0.35, 0.30, 0.09, 0.02}</code></li>
+<li>annual transition rates <code>p12 = 0.25</code>,
+<code>p21 = 0.75</code></li>
+<li>initial probability of starting in regime 2 equal to
+<code>initProb2 = 0.20</code></li>
+<li>outer path count <code>nRWPaths = 48</code></li>
+<li>real-world RNG seed <code>rwSeed = 12345</code></li>
+</ul>
+<p>The current 5 by 5 equity correlation matrix is:</p>
+<p><span class="math display">\[
+\rho =
+\begin{bmatrix}
+1.000000 &amp; 0.761332 &amp; 0.556299 &amp; 0.238114 &amp; -0.025552
+\\\\
+0.761332 &amp; 1.000000 &amp; 0.443120 &amp; 0.131246 &amp; -0.024576
+\\\\
+0.556299 &amp; 0.443120 &amp; 1.000000 &amp; 0.153277 &amp; -0.023841
+\\\\
+0.238114 &amp; 0.131246 &amp; 0.153277 &amp; 1.000000 &amp; 0.062975
+\\\\
+-0.025552 &amp; -0.024576 &amp; -0.023841 &amp; 0.062975 &amp; 1.000000
+\end{bmatrix}.
+\]</span></p>
+<p>This gives the current outer model a clear risk-on versus risk-off
+interpretation: regime 1 carries higher expected equity growth with
+lower volatility, while regime 2 carries negative equity drift with
+materially higher volatility.</p>
+<h4 id="risk-neutral-inner-equity-parameters">Risk-Neutral Inner Equity
+Parameters</h4>
+<p>The inner <code>MultivariateBlackScholes&lt;T&gt;</code> model in the
+same example currently uses:</p>
+<ul>
+<li>initial spots
+<code>initialSpots = {30000, 25000, 20000, 15000, 10000}</code></li>
+<li>volatilities
+<code>vols = {0.18, 0.24, 0.20, 0.06, 0.015}</code></li>
+<li>dividend yields <code>divs = {0, 0, 0, 0, 0}</code></li>
+<li>the same 5 by 5 correlation matrix shown above</li>
+<li>inner path count <code>nRNPaths = 256</code></li>
+</ul>
+<p>In the current implementation, spots, dividend yields, and
+discount-curve knots may participate in AAD, while the Black-Scholes
+volatilities and correlations remain off tape as ordinary doubles.</p>
+<h4 id="real-world-interest-rate-parameters">Real-World Interest-Rate
+Parameters</h4>
+<p>The outer interest-rate generator uses <code>IRModelParams</code>. In
+the shipped nested all-rider example, some values are set explicitly in
+the example code and the remaining values are inherited from the struct
+defaults. The full currently active parameter set is therefore:</p>
+<ul>
+<li>long-run targets <code>tau1 = 0.04</code>, <code>tau2 = 0.03</code>,
+<code>tau3 = 0.01</code></li>
+<li>mean-reversion speeds <code>beta1 = 0.10</code>,
+<code>beta2 = 0.15</code>, <code>beta3 = 0.05</code></li>
+<li>shock scales <code>sigma1 = 0.05</code>, <code>sigma2 = 0.02</code>,
+<code>sigma3 = 0.20</code></li>
+<li>structural coefficients inherited from current defaults:
+<code>phi = 0.10</code>, <code>psi = 0.50</code>,
+<code>theta = 0.50</code></li>
+<li>lower and upper bounds inherited from current defaults:
+<ul>
+<li><code>minLongRate = 0.001</code></li>
+<li><code>maxLongRate = 0.15</code></li>
+<li><code>minShortRate = 0.001</code></li>
+<li><code>maxShortRate = 0.25</code></li>
+<li><code>minVol = 1.0e-4</code></li>
+<li><code>maxVol = 0.50</code></li>
+</ul></li>
+<li>shock correlations <code>rho12 = 0.30</code>,
+<code>rho13 = 0.10</code>, <code>rho23 = -0.20</code></li>
+<li>initial short rate <code>initialIRShort = 0.02</code></li>
+<li>initial long rate <code>initialIRLong = 0.04</code></li>
+<li>initial volatility state <code>initialIRVol = 0.01</code></li>
+<li>interest-rate RNG seed <code>irSeed = 54321</code></li>
+</ul>
+<p>The Nelson-Siegel conversion inside
+<code>InterestRateScenarioGenerator::buildNelsonSiegelCurve(...)</code>
+currently uses:</p>
+<ul>
+<li>maturity grid <code>0.25, 0.5, 1, 2, 3, 5, 7, 10, 20, 30</code></li>
+<li>fixed decay parameter <code>k = 0.4</code></li>
+</ul>
+<p>Those hardcoded choices matter because they determine the shape of
+the curve handed from the outer real-world generator into the inner
+pricing problem.</p>
+<p>In the current nested implementation, the outer node also retains the
+corresponding short and long rates. The nested builder can pass these
+into the inner model so optional NS-tail discounting uses more of the
+outer curve state without increasing the number of reported curve risk
+factors.</p>
+<h3 id="where-and-how-to-change-esg-parameters">Where And How To Change
+ESG Parameters</h3>
+<p>The main developer rule is simple: change example files when you want
+a different calibration, and change <code>esg/*.hpp</code> only when you
+want to alter model defaults or the model definition itself.</p>
+<h4 id="change-the-current-driver-calibration">Change The Current Driver
+Calibration</h4>
+<p>For the tracked single-contract driver, adjust the relevant defaults
+or wiring in <code>examples/simulate_rider.cpp</code>, or pass policy
+and simulation settings through its CLI. For batch experiments, prefer
+changing the portfolio-generation and runner inputs described in
+<code>docs/portfolio_training.md</code>. Those are the primary change
+points for:</p>
+<ul>
+<li>real-world equity drifts, volatilities, transition rates, path
+counts, and seeds;</li>
+<li>risk-neutral spots, vols, dividends, and inner-path counts;</li>
+<li>real-world interest-rate levels, reversion speeds, volatilities,
+initial states, and seeds;</li>
+<li>benefit-base rule selection: pass
+<code>--benefit-base-rule {ROP, ratchet, roll-up}</code> to
+<code>gen_portfolio.py</code> to pin every policy in a portfolio to one
+rule, and <code>--update-rule {rop, step-up, roll-up}</code> to
+<code>sobolev_va_training.py</code> to train a surrogate on a single
+rule’s data.</li>
+</ul>
+<p>The complete paper-dataset pipeline (9 riders × 3 rules × 100
+policies, 100 000 × 1 000 paths) is in
+<code>scripts/paper_pipeline.txt</code>.</p>
+<p>If you keep additional local exploratory example files in your
+worktree, make corresponding edits there so the calibrations stay
+aligned.</p>
+<h4 id="change-default-real-world-equity-parameters">Change Default
+Real-World Equity Parameters</h4>
+<p>Edit <code>RSParams</code> in <code>esg/regime_switching.hpp</code>
+if you want to change the library-level defaults for:</p>
+<ul>
+<li><code>nIndices</code></li>
+<li><code>p12</code></li>
+<li><code>p21</code></li>
+<li><code>initProb2</code></li>
+</ul>
+<p>The drift, volatility, and correlation arrays are expected to be
+provided by the caller and are therefore best changed in the application
+or example that builds them.</p>
+<h4 id="change-default-real-world-interest-rate-parameters">Change
+Default Real-World Interest-Rate Parameters</h4>
+<p>Edit <code>IRModelParams</code> in
+<code>esg/interest_rate_model.hpp</code> if you want to change the
+library-level defaults for:</p>
+<ul>
+<li><code>tau1</code>, <code>tau2</code>, <code>tau3</code></li>
+<li><code>beta1</code>, <code>beta2</code>, <code>beta3</code></li>
+<li><code>sigma1</code>, <code>sigma2</code>, <code>sigma3</code></li>
+<li><code>phi</code>, <code>psi</code>, <code>theta</code></li>
+<li>lower and upper bounds on rates and volatility</li>
+<li><code>rho12</code>, <code>rho13</code>, <code>rho23</code></li>
+</ul>
+<p>Edit
+<code>InterestRateScenarioGenerator::buildNelsonSiegelCurve(...)</code>
+in the same file if you want to change the maturity grid or the
+currently fixed decay parameter <code>k = 0.4</code>.</p>
+<h4 id="change-risk-neutral-inner-pricing-inputs">Change Risk-Neutral
+Inner Pricing Inputs</h4>
+<p>Edit the caller that assembles the nested run, typically
+<code>examples/simulate_rider.cpp</code> on current <code>main</code>,
+if you only want to change the numerical values of spots, vols,
+dividends, or path counts.</p>
+<p>Use <code>NestedSimConfig::useNSTail</code> to toggle the inner
+long-end discounting mode in nested runs (<code>false</code> = knot-only
+curve extrapolation, <code>true</code> = NS-informed tail anchored to
+curve knots).</p>
+<p>Set <code>NestedSimConfig::useHullWhiteInner = true</code> (with
+<code>hwParams.a</code> and <code>hwParams.sigma</code>) to replace the
+static-curve inner discount model with a stochastic Hull-White
+one-factor short rate calibrated to the outer AIRG curve. See the
+<em>Hull-White One-Factor Inner Interest-Rate Model</em> section above
+for details.</p>
+<p>Edit <code>MultivariateBlackScholes&lt;T&gt;</code> in
+<code>esg/multivariate_blackscholes.hpp</code> if you want to change the
+static-curve inner model contract. Edit
+<code>HullWhiteBlackScholes&lt;T&gt;</code> in
+<code>esg/hull_white_blackscholes.hpp</code> if you want to change the
+stochastic inner rate model.</p>
+<h4 id="change-mortality-inputs-used-by-esg-driven-examples">Change
+Mortality Inputs Used By ESG-Driven Examples</h4>
+<p>Edit the mortality-table construction helper in the relevant example
+or application source if you want a different mortality calibration in a
+nested valuation run.</p>
+<p>Edit <code>demographics/mortality.hpp</code> only if you want to
+change the mathematical interpretation of that table, such as
+interpolation or actuarial helper logic.</p>
+<h3 id="how-the-esg-pieces-work-together">How The ESG Pieces Work
+Together</h3>
+<p>The nested valuation workflow is:</p>
+<ol type="1">
+<li>generate outer real-world equity and rate paths (AIRG outer
+interest-rate generator + regime-switching equity);</li>
+<li>convert each outer state into inner pricing inputs: fund levels, the
+AIRG yield curve as the initial term structure, and optionally
+short/long rate state for NS-tail handling;</li>
+<li>run an inner risk-neutral valuation using either:
+<ul>
+<li><code>MultivariateBlackScholes&lt;T&gt;</code> with a <strong>static
+outer curve</strong> (<code>useHullWhiteInner = false</code>, default),
+or</li>
+<li><code>HullWhiteBlackScholes&lt;T&gt;</code> with a
+<strong>stochastic HW1F short rate</strong> calibrated to the outer
+curve (<code>useHullWhiteInner = true</code>);</li>
+</ul></li>
+<li>average across outer scenarios to obtain the nested liability
+estimate.</li>
+</ol>
+<p>Conceptually, the outer layer answers “where could the world be at
+the future valuation date?” and the inner layer answers “what is the
+market-consistent value of the guarantee conditional on that state?” For
+a fuller discussion of that real-world versus risk-neutral split in a VA
+context, the interested reader should again see Gan and Valdez
+(2018).</p>
+<h3 id="model-interface-example">Model Interface Example</h3>
+<div class="sourceCode" id="cb16"><pre
+class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="kw">template</span><span class="op">&lt;</span><span class="kw">class</span> T<span class="op">&gt;</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> LifeModel <span class="op">{</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span><span class="op">:</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">virtual</span> <span class="dt">void</span> allocateProjection<span class="op">(</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>        <span class="at">const</span> <span class="bu">std::</span>vector<span class="op">&lt;</span><span class="dt">double</span><span class="op">&gt;&amp;</span> timeline<span class="op">,</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>        <span class="at">const</span> <span class="bu">std::</span>vector<span class="op">&lt;</span>SampleDef<span class="op">&gt;&amp;</span> defline<span class="op">)</span> <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">virtual</span> <span class="dt">void</span> initProjection<span class="op">(</span></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>        <span class="at">const</span> <span class="bu">std::</span>vector<span class="op">&lt;</span><span class="dt">double</span><span class="op">&gt;&amp;</span> timeline<span class="op">,</span></span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>        <span class="at">const</span> <span class="bu">std::</span>vector<span class="op">&lt;</span>SampleDef<span class="op">&gt;&amp;</span> defline<span class="op">)</span> <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">virtual</span> <span class="dt">size_t</span> simDim<span class="op">()</span> <span class="at">const</span> <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>    <span class="kw">virtual</span> <span class="dt">void</span> generatePath<span class="op">(</span></span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>        <span class="at">const</span> <span class="bu">std::</span>vector<span class="op">&lt;</span><span class="dt">double</span><span class="op">&gt;&amp;</span> gaussVec<span class="op">,</span></span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>        Scenario<span class="op">&lt;</span>T<span class="op">&gt;&amp;</span> path<span class="op">)</span> <span class="at">const</span> <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span></code></pre></div>
+<h3 id="black-scholes-construction-example">Black-Scholes Construction
+Example</h3>
+<div class="sourceCode" id="cb17"><pre
+class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>YieldCurve<span class="op">&lt;</span>Number<span class="op">&gt;</span> curve<span class="op">;</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>curve<span class="op">.</span>setDiscountCurve<span class="op">({</span><span class="fl">0.0</span><span class="op">,</span> <span class="fl">1.0</span><span class="op">,</span> <span class="fl">2.0</span><span class="op">},</span> <span class="op">{</span>Number<span class="op">(</span><span class="fl">1.0</span><span class="op">),</span> Number<span class="op">(</span><span class="fl">0.97</span><span class="op">),</span> Number<span class="op">(</span><span class="fl">0.93</span><span class="op">)});</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>MultivariateBlackScholes<span class="op">&lt;</span>Number<span class="op">&gt;</span> model<span class="op">(</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>    <span class="bu">std::</span>vector<span class="op">&lt;</span>Number<span class="op">&gt;{</span>Number<span class="op">(</span><span class="fl">100.0</span><span class="op">),</span> Number<span class="op">(</span><span class="fl">95.0</span><span class="op">)},</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>    <span class="bu">std::</span>vector<span class="op">&lt;</span>Number<span class="op">&gt;{</span>Number<span class="op">(</span><span class="fl">0.02</span><span class="op">),</span> Number<span class="op">(</span><span class="fl">0.01</span><span class="op">)},</span></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>    <span class="bu">std::</span>vector<span class="op">&lt;</span><span class="dt">double</span><span class="op">&gt;{</span><span class="fl">0.20</span><span class="op">,</span> <span class="fl">0.25</span><span class="op">},</span></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>    corrMatrix<span class="op">,</span></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>    curve<span class="op">);</span></span></code></pre></div>
+<h3 id="what-users-should-watch">What Users Should Watch</h3>
+<ul>
+<li><code>SampleDef::numAssets</code> must stay consistent with the
+model dimension. A mismatch usually appears as malformed path writes
+rather than as a clean compiler error.</li>
+<li>Yield-curve discount knots are part of the differentiated state in
+AAD inner pricing, so tape lifecycle issues often surface first in this
+module.</li>
+<li>The outer models are for scenario generation, not direct
+market-consistent pricing. Market-consistent valuation happens in the
+inner Black-Scholes layer.</li>
+</ul>
+<p class="back-to-tabs">
+<a href="#module-tabs">Back to tabs</a>
+</p>
+<hr />
+<h2 id="monte-carlo">Monte Carlo</h2>
+<p>The <code>montecarlo</code> module is the orchestration layer between
+models and products. It defines the path container format in
+<code>montecarlo/scenario.hpp</code> and implements the AAD-aware and
+nested simulation flows that are currently aligned with the library’s
+active variable-annuity use case. The key idea is that a model fills a
+<code>Scenario&lt;T&gt;</code> path according to a
+<code>SampleDef</code> contract and a product evaluates that path into
+one or more outputs.</p>
+<p>The central currently active path is
+<code>mcsimulationAAD.hpp</code>. That flow clones the model and RNG,
+allocates the path once, marks the tape after model initialization,
+rewinds to that mark per path, and accumulates adjoints in a bounded
+tape region. That design is what makes large differentiated path batches
+feasible without letting the graph grow path after path.</p>
+<p>Nested simulation builds one more layer on top. The outer loop is
+parallel, and each worker performs the inner pricing serially against
+its own state. That choice is deliberate. It avoids cross-thread tape
+ownership and avoids nested schedulers fighting over the same work
+queue. The result is less theoretical parallelism inside each node, but
+a much cleaner implementation and a far lower debugging burden.</p>
+<h3 id="aad-monte-carlo-example">AAD Monte Carlo Example</h3>
+<div class="sourceCode" id="cb18"><pre
+class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>LifeAADResults results <span class="op">=</span> lifeSimulationAAD<span class="op">(</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>    product<span class="op">,</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    model<span class="op">,</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>    rng<span class="op">,</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>    <span class="dv">1000</span><span class="op">);</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> <span class="op">(</span><span class="at">const</span> <span class="kw">auto</span><span class="op">&amp;</span> pathOutputs <span class="op">:</span> results<span class="op">.</span>pathOutputs<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>    <span class="co">// pathOutputs contains the product&#39;s output vector for one path</span></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<h3 id="simulation-skeleton">Simulation Skeleton</h3>
+<div class="sourceCode" id="cb19"><pre
+class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>Scenario<span class="op">&lt;</span>Number<span class="op">&gt;</span> path<span class="op">;</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>allocatePath<span class="op">(</span>prd<span class="op">.</span>projectionDefline<span class="op">(),</span> path<span class="op">);</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>initializePath<span class="op">(</span>path<span class="op">);</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> <span class="op">(</span><span class="dt">size_t</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> nPaths<span class="op">;</span> <span class="op">++</span>i<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>    tape<span class="op">.</span>rewindToMark<span class="op">();</span></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>    cRng<span class="op">-&gt;</span>nextG<span class="op">(</span>gaussVec<span class="op">);</span></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>    cMdl<span class="op">-&gt;</span>generatePath<span class="op">(</span>gaussVec<span class="op">,</span> path<span class="op">);</span></span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>    prd<span class="op">.</span>evaluateLiability<span class="op">(</span>path<span class="op">,</span> nPayoffs<span class="op">);</span></span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>    Number result <span class="op">=</span> aggFun<span class="op">(</span>nPayoffs<span class="op">);</span></span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>    result<span class="op">.</span>propagateToMark<span class="op">();</span></span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<h3 id="implementation-notes-4">Implementation Notes</h3>
+<ul>
+<li><code>Scenario&lt;T&gt;</code> is not an incidental container. It is
+the core data contract between models and products.</li>
+<li><code>allocatePath()</code> and <code>initializePath()</code> are
+designed to let path memory be reused rather than rebuilt for every
+path.</li>
+<li>Deterministic compensated summation in parallel AAD is not a
+micro-optimization; it is part of the correctness strategy for stable
+reported sensitivities.</li>
+</ul>
+<p class="back-to-tabs">
+<a href="#module-tabs">Back to tabs</a>
+</p>
+<hr />
+<h2 id="products">Products</h2>
+<p>The product layer implements a variable-annuity guarantee engine in
+the same spirit as Gan and Valdez’s projection framework for large VA
+portfolios, including standalone riders and combined riders.</p>
+<p>Primary actuarial references used for scope and behavior:</p>
+<ul>
+<li>Gan, G.; Pan, J. <em>Valuation of Large Variable Annuity Portfolios:
+Monte Carlo Simulation and Synthetic Datasets</em> (AFIR-ERM Panama,
+2017).</li>
+<li>Gan, G.; Valdez, E.A. <em>Nested Stochastic Valuation of Large
+Variable Annuity Portfolios: Monte Carlo Simulation and Synthetic
+Datasets</em>. Data 2018, 3, 31. <a
+href="https://doi.org/10.3390/data3030031">https://doi.org/10.3390/data3030031</a></li>
+</ul>
+<p>In the paper’s notation, monthly projected cash flows decompose into
+death benefits (DA), living benefits (LA), and risk charges (RC). This
+is exactly the actuarial split represented in ActuaLib’s rider step
+logic.</p>
+<h3 id="actuarial-product-scope-implemented-today">Actuarial Product
+Scope Implemented Today</h3>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>Rider type</th>
+<th>Actuarial meaning</th>
+<th>Contract behavior in ActuaLib</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>GMDB</code></td>
+<td>Guaranteed Minimum Death Benefit</td>
+<td>Death claim shortfall versus account value at each step.</td>
+</tr>
+<tr>
+<td><code>GMMB</code></td>
+<td>Guaranteed Minimum Maturity Benefit</td>
+<td>Maturity-only living guarantee, no renewal.</td>
+</tr>
+<tr>
+<td><code>GMAB</code></td>
+<td>Guaranteed Minimum Accumulation Benefit</td>
+<td>Maturity guarantee with renewal/top-up mechanics.</td>
+</tr>
+<tr>
+<td><code>GMWB</code></td>
+<td>Guaranteed Minimum Withdrawal Benefit</td>
+<td>Anniversary guaranteed withdrawal with insurer shortfall
+coverage.</td>
+</tr>
+<tr>
+<td><code>GMIB</code></td>
+<td>Guaranteed Minimum Income Benefit</td>
+<td>Maturity annuitization floor versus account value.</td>
+</tr>
+<tr>
+<td><code>GMDB_AB</code></td>
+<td>Death + accumulation combo</td>
+<td>Joint death guarantee and GMAB-style maturity guarantee.</td>
+</tr>
+<tr>
+<td><code>GMDB_MB</code></td>
+<td>Death + maturity combo</td>
+<td>Joint death guarantee and GMMB-style maturity guarantee.</td>
+</tr>
+<tr>
+<td><code>GMDB_WB</code></td>
+<td>Death + withdrawal combo</td>
+<td>Joint death guarantee and GMWB withdrawal logic.</td>
+</tr>
+<tr>
+<td><code>GMDB_IB</code></td>
+<td>Death + income combo</td>
+<td>Joint death guarantee and GMIB annuitization logic.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="contract-assumptions-used-by-the-projection-engine">Contract
+Assumptions Used By The Projection Engine</h3>
+<p>The Panama 2017 formulation is explicit about event ordering and
+policyholder behavior. The current implementation follows the same
+high-level actuarial pattern.</p>
+<ul>
+<li>Monthly step ordering: fund-management fees deducted first, then
+M&amp;E plus rider charges, then death benefit if death occurs in-step,
+then living benefit if alive.</li>
+<li>Benefit-base styles: return-of-premium, annual roll-up, and annual
+ratchet are supported conceptually through guarantee-base update
+rules.</li>
+<li>GMWB behavior assumption: policyholder takes the maximum allowable
+withdrawal at anniversaries (subject to remaining guaranteed withdrawal
+balance).</li>
+<li>GMAB behavior assumption: at maturity, policy renews only when
+account value exceeds guarantee base; otherwise insurer shortfall is
+paid.</li>
+<li>GMIB maturity option: living benefit is based on the
+annuitization-floor comparison at maturity.</li>
+</ul>
+<h3 id="rider-definitions-actuarial-view">Rider Definitions (Actuarial
+View)</h3>
+<p>The library computes monthly death benefit (DA), living benefit (LA),
+and rider charge (RC), then aggregates mortality-weighted present values
+into FMV.</p>
+<ul>
+<li><code>GMDB</code>: DA = max(0, gbAmt - AV), LA = 0.</li>
+<li><code>GMMB</code>: LA = max(0, gbAmt - AV) at maturity horizon
+only.</li>
+<li><code>GMAB</code>: Same maturity LA as GMMB plus maturity renewal
+mechanics (top-up/reset) and possible multiple maturity events.</li>
+<li><code>GMWB</code>: Anniversary guaranteed withdrawal with guaranteed
+withdrawal balance drawdown; LA is insurer shortfall when AV cannot fund
+withdrawal.</li>
+<li><code>GMIB</code>: LA at maturity based on annuitization-floor value
+versus AV.</li>
+<li><code>GMDB_*</code> combos: Add GMDB-style death protection to the
+corresponding living rider.</li>
+</ul>
+<h3 id="paper-to-code-mapping-what-matters-for-actuaries">Paper-to-Code
+Mapping (What Matters For Actuaries)</h3>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>Paper concept (Gan 2017)</th>
+<th>Practical meaning</th>
+<th>ActuaLib location</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>DA / LA / RC decomposition</td>
+<td>Separate death claim, living claim, and rider-charge cashflows each
+step</td>
+<td><code>products/va_base.hpp</code> and rider-specific
+<code>project(...)</code></td>
+</tr>
+<tr>
+<td>Guarantee base evolution (ROP / roll-up / ratchet)</td>
+<td>Contract basis update rule at anniversaries</td>
+<td><code>VAPolicy::updateRule</code> consumed by rider logic</td>
+</tr>
+<tr>
+<td>Maturity-only living claims (GMMB/GMIB)</td>
+<td>Living benefits occur only at maturity checkpoints</td>
+<td><code>va_gmmb.hpp</code>, <code>va_gmib.hpp</code></td>
+</tr>
+<tr>
+<td>Anniversary withdrawal dynamics (GMWB)</td>
+<td>Scheduled annual withdrawals against guarantee balance</td>
+<td><code>va_gmwb.hpp</code></td>
+</tr>
+<tr>
+<td>Combined riders (DBAB/DBIB/DBMB/DBWB)</td>
+<td>Overlay GMDB death logic on living rider</td>
+<td><code>products/va_combo.hpp</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="calibration-context-from-gan-panama-2017">Calibration Context
+From Gan Panama 2017</h3>
+<p>The paper’s synthetic portfolio uses rider-charge levels that are
+helpful as a starting sanity range (not as production calibration):</p>
+<ul>
+<li>Standalone riders roughly span 25 bps to 75 bps depending on
+guarantee richness and base style.</li>
+<li>Combined riders are modeled as sum of component fees minus a
+diversification adjustment (20 bps in the paper setup).</li>
+</ul>
+<p>In practice, keep these as benchmark magnitudes only; real pricing
+should calibrate to current product specs, hedge costs, lapse
+assumptions, and market regime.</p>
+<h3 id="instantiate-each-implemented-rider-factory">Instantiate Each
+Implemented Rider (Factory)</h3>
+<div class="sourceCode" id="cb20"><pre
+class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&quot;products/va_factory.hpp&quot;</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> ActuaLib<span class="op">;</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="kw">auto</span> gmdb    <span class="op">=</span> makeRider<span class="op">&lt;</span><span class="dt">double</span><span class="op">&gt;(</span>RiderType<span class="op">::</span>GMDB<span class="op">,</span>    policy<span class="op">,</span> mortality<span class="op">);</span></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a><span class="kw">auto</span> gmmb    <span class="op">=</span> makeRider<span class="op">&lt;</span><span class="dt">double</span><span class="op">&gt;(</span>RiderType<span class="op">::</span>GMMB<span class="op">,</span>    policy<span class="op">,</span> mortality<span class="op">);</span></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a><span class="kw">auto</span> gmab    <span class="op">=</span> makeRider<span class="op">&lt;</span><span class="dt">double</span><span class="op">&gt;(</span>RiderType<span class="op">::</span>GMAB<span class="op">,</span>    policy<span class="op">,</span> mortality<span class="op">);</span></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a><span class="kw">auto</span> gmwb    <span class="op">=</span> makeRider<span class="op">&lt;</span><span class="dt">double</span><span class="op">&gt;(</span>RiderType<span class="op">::</span>GMWB<span class="op">,</span>    policy<span class="op">,</span> mortality<span class="op">);</span></span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a><span class="kw">auto</span> gmib    <span class="op">=</span> makeRider<span class="op">&lt;</span><span class="dt">double</span><span class="op">&gt;(</span>RiderType<span class="op">::</span>GMIB<span class="op">,</span>    policy<span class="op">,</span> mortality<span class="op">);</span></span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a><span class="kw">auto</span> gmdbAb  <span class="op">=</span> makeRider<span class="op">&lt;</span><span class="dt">double</span><span class="op">&gt;(</span>RiderType<span class="op">::</span>GMDB_AB<span class="op">,</span> policy<span class="op">,</span> mortality<span class="op">);</span></span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a><span class="kw">auto</span> gmdbMb  <span class="op">=</span> makeRider<span class="op">&lt;</span><span class="dt">double</span><span class="op">&gt;(</span>RiderType<span class="op">::</span>GMDB_MB<span class="op">,</span> policy<span class="op">,</span> mortality<span class="op">);</span></span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a><span class="kw">auto</span> gmdbWb  <span class="op">=</span> makeRider<span class="op">&lt;</span><span class="dt">double</span><span class="op">&gt;(</span>RiderType<span class="op">::</span>GMDB_WB<span class="op">,</span> policy<span class="op">,</span> mortality<span class="op">);</span></span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a><span class="kw">auto</span> gmdbIb  <span class="op">=</span> makeRider<span class="op">&lt;</span><span class="dt">double</span><span class="op">&gt;(</span>RiderType<span class="op">::</span>GMDB_IB<span class="op">,</span> policy<span class="op">,</span> mortality<span class="op">);</span></span></code></pre></div>
+<h3 id="instantiate-direct-concrete-classes-alternative">Instantiate
+Direct Concrete Classes (Alternative)</h3>
+<div class="sourceCode" id="cb21"><pre
+class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&quot;products/va_gmdb.hpp&quot;</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&quot;products/va_gmmb.hpp&quot;</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&quot;products/va_gmab.hpp&quot;</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&quot;products/va_gmwb.hpp&quot;</span></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&quot;products/va_gmib.hpp&quot;</span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&quot;products/va_combo.hpp&quot;</span></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> ActuaLib<span class="op">;</span></span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>GMDB<span class="op">&lt;</span><span class="dt">double</span><span class="op">&gt;</span>    gmdb<span class="op">(</span>policy<span class="op">,</span> mortality<span class="op">);</span></span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>GMMB<span class="op">&lt;</span><span class="dt">double</span><span class="op">&gt;</span>    gmmb<span class="op">(</span>policy<span class="op">,</span> mortality<span class="op">);</span></span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>GMAB<span class="op">&lt;</span><span class="dt">double</span><span class="op">&gt;</span>    gmab<span class="op">(</span>policy<span class="op">,</span> mortality<span class="op">);</span></span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>GMWB<span class="op">&lt;</span><span class="dt">double</span><span class="op">&gt;</span>    gmwb<span class="op">(</span>policy<span class="op">,</span> mortality<span class="op">);</span></span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>GMIB<span class="op">&lt;</span><span class="dt">double</span><span class="op">&gt;</span>    gmib<span class="op">(</span>policy<span class="op">,</span> mortality<span class="op">);</span></span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a>GMDB_AB<span class="op">&lt;</span><span class="dt">double</span><span class="op">&gt;</span> gmdbAb<span class="op">(</span>policy<span class="op">,</span> mortality<span class="op">);</span></span>
+<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a>GMDB_MB<span class="op">&lt;</span><span class="dt">double</span><span class="op">&gt;</span> gmdbMb<span class="op">(</span>policy<span class="op">,</span> mortality<span class="op">);</span></span>
+<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a>GMDB_WB<span class="op">&lt;</span><span class="dt">double</span><span class="op">&gt;</span> gmdbWb<span class="op">(</span>policy<span class="op">,</span> mortality<span class="op">);</span></span>
+<span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a>GMDB_IB<span class="op">&lt;</span><span class="dt">double</span><span class="op">&gt;</span> gmdbIb<span class="op">(</span>policy<span class="op">,</span> mortality<span class="op">);</span></span></code></pre></div>
+<h3 id="policy-data-needed-by-actuarial-users">Policy Data Needed By
+Actuarial Users</h3>
+<p>All riders share <code>VAPolicy</code> and mortality inputs, with
+rider-specific fields activated as needed.</p>
+<ul>
+<li>Common: <code>fundValues</code>, <code>fundFees</code>,
+<code>baseFee</code>, <code>riderFee</code>, <code>currentAge</code>,
+<code>numMonths</code>, <code>monthsSinceIssue</code>,
+<code>female</code>, <code>gbAmt</code>, <code>updateRule</code>.
+<code>numMonths</code> is <strong>remaining months from the valuation
+date to maturity</strong> (not total contract term).
+<code>monthsSinceIssue</code> is months elapsed since inception and
+controls annual fee/benefit-base anniversary timing.</li>
+<li><code>GMAB</code> and <code>GMDB_AB</code>: set maturity schedule
+fields such as <code>maturityPeriod</code> or
+<code>firstMaturityMonth</code> and <code>renewalPeriod</code>.</li>
+<li><code>GMWB</code> and <code>GMDB_WB</code>: set
+<code>gmwbBalance</code> and <code>wbWithdrawalRate</code>.</li>
+<li><code>GMIB</code> and <code>GMDB_IB</code>: set
+<code>guaranteedAnnuityRate</code>.</li>
+</ul>
+<h3 id="projection-architecture-behind-all-riders">Projection
+Architecture Behind All Riders</h3>
+<p><code>VABase&lt;T&gt;</code> provides the shared monthly projection
+skeleton, and each rider overrides one hook:</p>
+<div class="sourceCode" id="cb22"><pre
+class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="kw">template</span> <span class="op">&lt;</span><span class="kw">class</span> T<span class="op">&gt;</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> VABase <span class="op">:</span> <span class="kw">public</span> Product<span class="op">&lt;</span>T<span class="op">&gt;</span> <span class="op">{</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="kw">protected</span><span class="op">:</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">virtual</span> VAStepCashflows<span class="op">&lt;</span>T<span class="op">&gt;</span> project<span class="op">(</span>VAStepState<span class="op">&lt;</span>T<span class="op">&gt;&amp;</span> state<span class="op">)</span> <span class="at">const</span> <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span></code></pre></div>
+<p>For actuarial interpretation, this means all riders use one
+consistent timeline, one consistent mortality weighting, and one
+consistent fee/tape lifecycle. Product differences are localized to the
+monthly benefit logic in <code>project()</code>.</p>
+<p class="back-to-tabs">
+<a href="#module-tabs">Back to tabs</a>
+</p>
+<hr />
+<h2 id="examples-and-tests">Examples And Tests</h2>
+<p>The <code>examples</code> directory is still the fastest way to
+understand how the library is intended to be composed in practice, but
+on current <code>main</code> the tracked executable surface is
+<code>simulate_rider.cpp</code>. That file shows the current
+application-level pattern: build policy data, construct mortality and
+market models, run a nested valuation, and write FMV plus sensitivities
+to HDF5. The broader portfolio orchestration and surrogate-training
+workflow now lives in the Python scripts documented in
+<code>docs/portfolio_training.md</code>.</p>
+<p>The <code>tests</code> directory serves two different roles. First,
+it contains low-level checks such as matrix behavior, AAD smoke tests,
+gradient verification, and RNG sanity/parity tests. Second, it acts as
+infrastructure-regression coverage. In this library, many important
+failures show up as changed valuation numbers or unstable sensitivities
+rather than as hard crashes. That makes the tests as much about
+preserving behavior as about catching programming mistakes.</p>
+<p>When onboarding to the codebase, a good sequence is: read this guide,
+open one example, open the corresponding product class, then follow the
+call chain back into <code>LifeModel&lt;T&gt;</code>,
+<code>Scenario&lt;T&gt;</code>, and the Monte Carlo entry point. That
+path exposes the actual design much faster than reading headers in
+directory order.</p>
+<h3 id="minimal-reading-order-for-new-contributors">Minimal Reading
+Order For New Contributors</h3>
+<pre class="text"><code>1. products/va_base.hpp
+2. esg/model.hpp
+3. montecarlo/scenario.hpp
+4. montecarlo/mcsimulationAAD.hpp
+5. aad/number.hpp and aad/gradient_tape.hpp
+6. examples/simulate_rider.cpp</code></pre>
+<h3 id="what-to-check-before-changing-core-infrastructure">What To Check
+Before Changing Core Infrastructure</h3>
+<ul>
+<li>If you change AAD lifecycle code, re-check tape mark/rewind behavior
+and parallel sensitivity reduction.</li>
+<li>If you change concurrency code, verify worker-slot ownership
+assumptions in parallel Monte Carlo AAD.</li>
+<li>If you change path layout or <code>SampleDef</code>, audit both
+model writers and product readers.</li>
+<li>If you change yield-curve or RNG code, expect valuation and
+regression tests to move before compile errors appear.</li>
+</ul>
+<p class="back-to-tabs">
+<a href="#module-tabs">Back to tabs</a>
+</p>
+<hr />
+<!-- markdownlint-enable MD033 MD010 MD024 -->
+<h2 id="closing-notes">Closing Notes</h2>
+<p>ActuaLib is easiest to use when the workflow stays explicit: models
+generate paths, products evaluate those paths, Monte Carlo repeats the
+exercise, and AAD differentiates the same valuation logic rather than
+replacing it. If you are new to the library, start from an example,
+identify the product, the market model, and the simulation entry point,
+and then work downward only as far as you need.</p>
+<p>If you are extending the library, prefer clear data flow and
+deterministic ownership over additional abstraction. In this codebase,
+the most reliable improvements have come from preserving those
+boundaries while making the model assumptions and user-facing workflow
+easier to understand.</p>
+</body>
+</html>
