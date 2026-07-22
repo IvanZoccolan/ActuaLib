@@ -1,5 +1,4 @@
 # ActuaLib
-[![DOI](https://zenodo.org/badge/1288996505.svg)](https://doi.org/10.5281/zenodo.21493987)
 
 ## What is ActuaLib?
 
